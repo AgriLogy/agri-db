@@ -12,6 +12,7 @@ dependencies = [
     "sqlalchemy>=2.0",
     "psycopg[binary]>=3.2",
     "python-dotenv>=1.0",
+    "pydantic>=2.13.4",
 ]
 
 [project.scripts]
@@ -22,6 +23,7 @@ agri-migrate = "agri.db._migrations.cli:main"
 [dependency-groups]
 dev = [
     "ruff>=0.7",
+    "sqlacodegen>=4.0.3",
 ]
 
 # ---------------------------------------------------------------------------
