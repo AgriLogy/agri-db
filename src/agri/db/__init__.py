@@ -17,9 +17,5 @@ from agri.db.base import AgriBase  # noqa: F401
 # CRITICAL: forgetting a re-export here makes Alembic autogenerate emit
 # DROP TABLE for any tables that domain owns. Always add a new domain
 # module to this list AND verify `make check-dev` stays clean.
-from agri.db.users import *  # noqa: F401, F403
-
-# from agri.db.sensors import *       # noqa: F401, F403  (Phase 4c)
-# from agri.db.irrigation import *    # noqa: F401, F403  (Phase 4d)
-# from agri.db.alerts import *        # noqa: F401, F403  (Phase 4e)
-# from agri.db.devices import *       # noqa: F401, F403  (Phase 4f)
+from agri.db.users import *      # noqa: F401, F403
+from agri.db.analytics import *  # noqa: F401, F403  (Phase 4c — 47 tables)

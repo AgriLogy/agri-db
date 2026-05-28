@@ -71,7 +71,6 @@ target_metadata = AgriBase.metadata
 _FILTERED_TABLE_PREFIXES = (
     "django_",
     "auth_",
-    "analytics_",  # TODO: remove progressively as Phase 4c-4f domain modules land
 )
 _FILTERED_TABLE_EXACT = {"alembic_version"}
 
