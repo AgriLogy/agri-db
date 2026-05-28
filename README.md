@@ -1,4 +1,4 @@
-# agrilogy-db
+# agri-db
 
 Schema-of-record for the Agrilogy Supabase Postgres. **All schema
 changes for both the (legacy) Django backend and the (planned) FastAPI
