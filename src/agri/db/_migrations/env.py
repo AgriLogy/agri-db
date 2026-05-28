@@ -3,10 +3,16 @@
 Resolves the target database from `DATABASE_URL` (env var or .env). No
 credentials live in alembic.ini.
 
-Schema strategy (as of v0.1): the baseline migration is a raw-SQL dump
-captured from the Django-bootstrapped schema. There are no SQLAlchemy
-models in this repo yet — they'll be introduced when the FastAPI rewrite
-lands. Until then, all migrations use `op.execute(...)`.
+Schema strategy (as of Phase 4a):
+  * Baseline migration is a raw-SQL dump captured from the
+    Django-bootstrapped schema (e46347…_baseline_from_django_v57.py).
+  * SQLAlchemy ORM models will be introduced per-domain in Phase 4b+
+    (users, sensors, irrigation, alerts, devices, ...). When that
+    starts, flip `target_metadata` to `AgriBase.metadata` and import
+    every domain module from `agri.db.__init__` so autogenerate sees
+    the full schema.
+  * Until then, `target_metadata = None` → autogenerate is disabled;
+    all migrations use `op.execute(...)`.
 """
 
 from __future__ import annotations
@@ -15,10 +21,12 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 from sqlalchemy import create_engine, pool
 
-load_dotenv()
+# usecwd=True lets us find .env.dev / .env.prod when invoked from
+# the repo root (the Makefile targets) regardless of installed location.
+load_dotenv(find_dotenv(usecwd=True))
 
 config = context.config
 
@@ -37,7 +45,8 @@ if not DATABASE_URL:
 # interpolation syntax, which breaks any percent-encoded password.
 # Instead, create the engine directly from the env var.
 
-# No declarative metadata yet — see module docstring.
+# No declarative metadata yet — Phase 4b will flip this to
+# `AgriBase.metadata` once the first domain module ships.
 target_metadata = None
 
 

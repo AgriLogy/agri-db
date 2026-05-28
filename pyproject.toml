@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "agri-db"
 version = "0.1.0"
@@ -10,7 +14,24 @@ dependencies = [
     "python-dotenv>=1.0",
 ]
 
+[project.scripts]
+# `agri-migrate` → alembic upgrade head against the bundled config.
+# Used by downstream services (agri-api, future ingest worker).
+agri-migrate = "agri.db._migrations.cli:main"
+
 [dependency-groups]
 dev = [
     "ruff>=0.7",
 ]
+
+# ---------------------------------------------------------------------------
+# Packaging — src/ layout, bundle the migration assets inside the wheel
+# ---------------------------------------------------------------------------
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"agri.db._migrations" = ["alembic.ini", "script.py.mako", "versions/*.py", "versions/*.sql"]
