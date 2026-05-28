@@ -3,7 +3,7 @@ revision = 3
 requires-python = ">=3.11"
 
 [[package]]
-name = "agrilogy-db"
+name = "agri-db"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
