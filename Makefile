@@ -2,8 +2,11 @@
 ## .env (dev or prod) so you can't accidentally point one command at the
 ## wrong database.
 
+ALEMBIC_INI := src/agri/db/_migrations/alembic.ini
+ALEMBIC      := uv run alembic -c $(ALEMBIC_INI)
+
 .PHONY: help install new upgrade-dev upgrade-prod current-dev current-prod \
-        history-dev history-prod stamp-dev-head stamp-prod-head
+        history-dev history-prod stamp-dev-head stamp-prod-head check-dev
 
 help:
 	@echo "Targets:"
@@ -17,34 +20,38 @@ help:
 	@echo "  history-prod    full revision history on prod"
 	@echo "  stamp-dev-head  mark dev as already at the latest revision (no DDL run)"
 	@echo "  stamp-prod-head mark prod as already at the latest revision (no DDL run)"
+	@echo "  check-dev       alembic check against dev (ORM ↔ DB drift)"
 
 install:
 	uv sync
 
 new:
 	@test -n "$(MSG)" || (echo "MSG is required: make new MSG='describe change'"; exit 1)
-	uv run alembic revision -m "$(MSG)"
+	$(ALEMBIC) revision -m "$(MSG)"
 
 upgrade-dev:
-	@set -a && source .env.dev && set +a && uv run alembic upgrade head
+	@set -a && source .env.dev && set +a && $(ALEMBIC) upgrade head
 
 upgrade-prod:
-	@set -a && source .env.prod && set +a && uv run alembic upgrade head
+	@set -a && source .env.prod && set +a && $(ALEMBIC) upgrade head
 
 current-dev:
-	@set -a && source .env.dev && set +a && uv run alembic current
+	@set -a && source .env.dev && set +a && $(ALEMBIC) current
 
 current-prod:
-	@set -a && source .env.prod && set +a && uv run alembic current
+	@set -a && source .env.prod && set +a && $(ALEMBIC) current
 
 history-dev:
-	@set -a && source .env.dev && set +a && uv run alembic history --verbose
+	@set -a && source .env.dev && set +a && $(ALEMBIC) history --verbose
 
 history-prod:
-	@set -a && source .env.prod && set +a && uv run alembic history --verbose
+	@set -a && source .env.prod && set +a && $(ALEMBIC) history --verbose
 
 stamp-dev-head:
-	@set -a && source .env.dev && set +a && uv run alembic stamp head
+	@set -a && source .env.dev && set +a && $(ALEMBIC) stamp head
 
 stamp-prod-head:
-	@set -a && source .env.prod && set +a && uv run alembic stamp head
+	@set -a && source .env.prod && set +a && $(ALEMBIC) stamp head
+
+check-dev:
+	@set -a && source .env.dev && set +a && $(ALEMBIC) check
