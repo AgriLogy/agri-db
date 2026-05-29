@@ -13,6 +13,7 @@ and does not require the target table to exist in metadata.
 Initial content generated from the live Supabase dev DB via sqlacodegen,
 then adapted to use ``AgriBase`` and our naming conventions.
 """
+
 from __future__ import annotations
 
 import datetime
@@ -28,7 +29,6 @@ from sqlalchemy import (
     Identity,
     Index,
     Integer,
-    MetaData,
     PrimaryKeyConstraint,
     SmallInteger,
     String,
@@ -39,6 +39,58 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from agri.db.base import AgriBase
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from agri.db.analytics import (
+        AnalyticsActivegraph,
+        AnalyticsAlert,
+        AnalyticsEcsalinitysensor,
+        AnalyticsEcsoilhigh,
+        AnalyticsEcsoillow,
+        AnalyticsEcsoilmedium,
+        AnalyticsElectricityconsumptionsensor,
+        AnalyticsEt0calculated,
+        AnalyticsEt0weather,
+        AnalyticsFruitsizesensor,
+        AnalyticsGraphname,
+        AnalyticsHumidityweather,
+        AnalyticsKc,
+        AnalyticsLargefruitdiametersensor,
+        AnalyticsLeafmoisturesensor,
+        AnalyticsLeaftemperaturesensor,
+        AnalyticsManageraffirmation,
+        AnalyticsMultidepthsoilmoisturesensor,
+        AnalyticsNotification,
+        AnalyticsNpksensor,
+        AnalyticsPhsoil,
+        AnalyticsPhwatersensor,
+        AnalyticsPrecipitationrate,
+        AnalyticsPressureweather,
+        AnalyticsSensorcolor,
+        AnalyticsSensorlocation,
+        AnalyticsSoilconductivitysensor,
+        AnalyticsSoilmoisturehigh,
+        AnalyticsSoilmoisturelow,
+        AnalyticsSoilmoisturemedium,
+        AnalyticsSoilsalinitysensor,
+        AnalyticsSoiltemperaturehigh,
+        AnalyticsSoiltemperaturelow,
+        AnalyticsSoiltemperaturemedium,
+        AnalyticsSolarradiation,
+        AnalyticsTemperatureweather,
+        AnalyticsUsersensorunitpreference,
+        AnalyticsVpdweather,
+        AnalyticsWaterecsensor,
+        AnalyticsWaterflowsensor,
+        AnalyticsWaterlevelsensor,
+        AnalyticsWaterpressuresensor,
+        AnalyticsWinddirection,
+        AnalyticsWindspeed,
+        AnalyticsZone,
+    )
+
 
 __all__ = [
     "CustomUserCustomuser",
@@ -145,10 +197,174 @@ class CustomUserCustomuser(AgriBase):
         back_populates="customuser",
         cascade="all, delete-orphan",
     )
-    permission_grants: Mapped[list["CustomUserCustomuserUserPermissions"]] = relationship(
-        "CustomUserCustomuserUserPermissions",
-        back_populates="customuser",
-        cascade="all, delete-orphan",
+    permission_grants: Mapped[list["CustomUserCustomuserUserPermissions"]] = (
+        relationship(
+            "CustomUserCustomuserUserPermissions",
+            back_populates="customuser",
+            cascade="all, delete-orphan",
+        )
+    )
+
+    # ---------------------------------------------------------------------
+    # Reverse side of every user-owned analytics relationship.
+    #
+    # Each analytics model declares a ``user`` relationship with
+    # ``back_populates`` naming one of these attributes; SQLAlchemy pairs by
+    # (target class, property name). Without these, configure_mappers()
+    # raises for the WHOLE registry on the first ORM operation — so any
+    # query through agri.core.database would fail. (sqlacodegen emitted both
+    # sides; the hand-curated rewrite of this file dropped the user side.)
+    #
+    # Cross-file string targets resolve via the shared AgriBase registry —
+    # both modules are imported in ``agri.db.__init__``.
+    # ---------------------------------------------------------------------
+    analytics_activegraph: Mapped[list["AnalyticsActivegraph"]] = relationship(
+        "AnalyticsActivegraph", back_populates="user"
+    )
+    analytics_alert: Mapped[list["AnalyticsAlert"]] = relationship(
+        "AnalyticsAlert", back_populates="user"
+    )
+    analytics_ecsalinitysensor: Mapped[list["AnalyticsEcsalinitysensor"]] = (
+        relationship("AnalyticsEcsalinitysensor", back_populates="user")
+    )
+    analytics_ecsoilhigh: Mapped[list["AnalyticsEcsoilhigh"]] = relationship(
+        "AnalyticsEcsoilhigh", back_populates="user"
+    )
+    analytics_ecsoillow: Mapped[list["AnalyticsEcsoillow"]] = relationship(
+        "AnalyticsEcsoillow", back_populates="user"
+    )
+    analytics_ecsoilmedium: Mapped[list["AnalyticsEcsoilmedium"]] = relationship(
+        "AnalyticsEcsoilmedium", back_populates="user"
+    )
+    analytics_electricityconsumptionsensor: Mapped[
+        list["AnalyticsElectricityconsumptionsensor"]
+    ] = relationship("AnalyticsElectricityconsumptionsensor", back_populates="user")
+    analytics_et0calculated: Mapped[list["AnalyticsEt0calculated"]] = relationship(
+        "AnalyticsEt0calculated", back_populates="user"
+    )
+    analytics_et0weather: Mapped[list["AnalyticsEt0weather"]] = relationship(
+        "AnalyticsEt0weather", back_populates="user"
+    )
+    analytics_fruitsizesensor: Mapped[list["AnalyticsFruitsizesensor"]] = relationship(
+        "AnalyticsFruitsizesensor", back_populates="user"
+    )
+    analytics_graphname: Mapped[list["AnalyticsGraphname"]] = relationship(
+        "AnalyticsGraphname", back_populates="user"
+    )
+    analytics_humidityweather: Mapped[list["AnalyticsHumidityweather"]] = relationship(
+        "AnalyticsHumidityweather", back_populates="user"
+    )
+    analytics_kc: Mapped[list["AnalyticsKc"]] = relationship(
+        "AnalyticsKc", back_populates="user"
+    )
+    analytics_largefruitdiametersensor: Mapped[
+        list["AnalyticsLargefruitdiametersensor"]
+    ] = relationship("AnalyticsLargefruitdiametersensor", back_populates="user")
+    analytics_leafmoisturesensor: Mapped[list["AnalyticsLeafmoisturesensor"]] = (
+        relationship("AnalyticsLeafmoisturesensor", back_populates="user")
+    )
+    analytics_leaftemperaturesensor: Mapped[list["AnalyticsLeaftemperaturesensor"]] = (
+        relationship("AnalyticsLeaftemperaturesensor", back_populates="user")
+    )
+    analytics_multidepthsoilmoisturesensor: Mapped[
+        list["AnalyticsMultidepthsoilmoisturesensor"]
+    ] = relationship("AnalyticsMultidepthsoilmoisturesensor", back_populates="user")
+    analytics_notification: Mapped[list["AnalyticsNotification"]] = relationship(
+        "AnalyticsNotification", back_populates="user"
+    )
+    analytics_npksensor: Mapped[list["AnalyticsNpksensor"]] = relationship(
+        "AnalyticsNpksensor", back_populates="user"
+    )
+    analytics_phsoil: Mapped[list["AnalyticsPhsoil"]] = relationship(
+        "AnalyticsPhsoil", back_populates="user"
+    )
+    analytics_phwatersensor: Mapped[list["AnalyticsPhwatersensor"]] = relationship(
+        "AnalyticsPhwatersensor", back_populates="user"
+    )
+    analytics_precipitationrate: Mapped[list["AnalyticsPrecipitationrate"]] = (
+        relationship("AnalyticsPrecipitationrate", back_populates="user")
+    )
+    analytics_pressureweather: Mapped[list["AnalyticsPressureweather"]] = relationship(
+        "AnalyticsPressureweather", back_populates="user"
+    )
+    analytics_sensorcolor: Mapped[list["AnalyticsSensorcolor"]] = relationship(
+        "AnalyticsSensorcolor", back_populates="user"
+    )
+    analytics_sensorlocation: Mapped[list["AnalyticsSensorlocation"]] = relationship(
+        "AnalyticsSensorlocation", back_populates="user"
+    )
+    analytics_soilconductivitysensor: Mapped[
+        list["AnalyticsSoilconductivitysensor"]
+    ] = relationship("AnalyticsSoilconductivitysensor", back_populates="user")
+    analytics_soilmoisturehigh: Mapped[list["AnalyticsSoilmoisturehigh"]] = (
+        relationship("AnalyticsSoilmoisturehigh", back_populates="user")
+    )
+    analytics_soilmoisturelow: Mapped[list["AnalyticsSoilmoisturelow"]] = relationship(
+        "AnalyticsSoilmoisturelow", back_populates="user"
+    )
+    analytics_soilmoisturemedium: Mapped[list["AnalyticsSoilmoisturemedium"]] = (
+        relationship("AnalyticsSoilmoisturemedium", back_populates="user")
+    )
+    analytics_soilsalinitysensor: Mapped[list["AnalyticsSoilsalinitysensor"]] = (
+        relationship("AnalyticsSoilsalinitysensor", back_populates="user")
+    )
+    analytics_soiltemperaturehigh: Mapped[list["AnalyticsSoiltemperaturehigh"]] = (
+        relationship("AnalyticsSoiltemperaturehigh", back_populates="user")
+    )
+    analytics_soiltemperaturelow: Mapped[list["AnalyticsSoiltemperaturelow"]] = (
+        relationship("AnalyticsSoiltemperaturelow", back_populates="user")
+    )
+    analytics_soiltemperaturemedium: Mapped[list["AnalyticsSoiltemperaturemedium"]] = (
+        relationship("AnalyticsSoiltemperaturemedium", back_populates="user")
+    )
+    analytics_solarradiation: Mapped[list["AnalyticsSolarradiation"]] = relationship(
+        "AnalyticsSolarradiation", back_populates="user"
+    )
+    analytics_temperatureweather: Mapped[list["AnalyticsTemperatureweather"]] = (
+        relationship("AnalyticsTemperatureweather", back_populates="user")
+    )
+    analytics_usersensorunitpreference: Mapped[
+        list["AnalyticsUsersensorunitpreference"]
+    ] = relationship("AnalyticsUsersensorunitpreference", back_populates="user")
+    analytics_vpdweather: Mapped[list["AnalyticsVpdweather"]] = relationship(
+        "AnalyticsVpdweather", back_populates="user"
+    )
+    analytics_waterecsensor: Mapped[list["AnalyticsWaterecsensor"]] = relationship(
+        "AnalyticsWaterecsensor", back_populates="user"
+    )
+    analytics_waterflowsensor: Mapped[list["AnalyticsWaterflowsensor"]] = relationship(
+        "AnalyticsWaterflowsensor", back_populates="user"
+    )
+    analytics_waterlevelsensor: Mapped[list["AnalyticsWaterlevelsensor"]] = (
+        relationship("AnalyticsWaterlevelsensor", back_populates="user")
+    )
+    analytics_waterpressuresensor: Mapped[list["AnalyticsWaterpressuresensor"]] = (
+        relationship("AnalyticsWaterpressuresensor", back_populates="user")
+    )
+    analytics_winddirection: Mapped[list["AnalyticsWinddirection"]] = relationship(
+        "AnalyticsWinddirection", back_populates="user"
+    )
+    analytics_windspeed: Mapped[list["AnalyticsWindspeed"]] = relationship(
+        "AnalyticsWindspeed", back_populates="user"
+    )
+    analytics_zone: Mapped[list["AnalyticsZone"]] = relationship(
+        "AnalyticsZone", back_populates="user"
+    )
+    # ManagerAffirmation has two FKs to the user, so each reverse side names
+    # the foreign key it pairs with.
+    analytics_manageraffirmation_decided_by: Mapped[
+        list["AnalyticsManageraffirmation"]
+    ] = relationship(
+        "AnalyticsManageraffirmation",
+        foreign_keys="AnalyticsManageraffirmation.decided_by_id",
+        back_populates="decided_by",
+    )
+    analytics_manageraffirmation_requested_by: Mapped[
+        list["AnalyticsManageraffirmation"]
+    ] = relationship(
+        "AnalyticsManageraffirmation",
+        foreign_keys="AnalyticsManageraffirmation.requested_by_id",
+        back_populates="requested_by",
     )
 
 
@@ -228,9 +444,7 @@ class CustomUserCustomuserUserPermissions(AgriBase):
             initially="DEFERRED",
             name="CustomUser_customuse_permission_id_a600872b_fk_auth_perm",
         ),
-        PrimaryKeyConstraint(
-            "id", name="CustomUser_customuser_user_permissions_pkey"
-        ),
+        PrimaryKeyConstraint("id", name="CustomUser_customuser_user_permissions_pkey"),
         UniqueConstraint(
             "customuser_id",
             "permission_id",
