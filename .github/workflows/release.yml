@@ -5,6 +5,11 @@ name: release
 # rewrites src/agri/db/_version.py, updates CHANGELOG.md, tags (bare
 # {version}), and creates a GitHub Release with the built dists attached.
 on:
+  # Auto-release on every push to main. The release commit semantic-release
+  # pushes back carries "[skip ci]", so it does not re-trigger this workflow.
+  push:
+    branches: [main]
+  # Manual fallback (and the only way to cut an rc off a feat/fix/perf branch).
   workflow_dispatch:
     inputs:
       release_type:
