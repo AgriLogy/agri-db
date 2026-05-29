@@ -11,6 +11,7 @@ console script entry point.
 """
 from __future__ import annotations
 
+from agri.db._version import __version__  # noqa: F401
 from agri.db.base import AgriBase  # noqa: F401
 
 # Per-domain modules — each re-export registers tables on AgriBase.metadata.
