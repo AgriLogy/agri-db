@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.1.1 (2026-05-29)
+
+### Bug Fixes
+
+- **deps**: Drop unused pydantic dependency ([#17](https://github.com/AgriLogy/agri-db/pull/17),
+  [`ba35a74`](https://github.com/AgriLogy/agri-db/commit/ba35a74b5c4ed6fe9acab17cfb925ca80f7ed376))
+
+Closes #16
+
+
 ## v0.1.0 (2026-05-29)
 
 ### Bug Fixes
