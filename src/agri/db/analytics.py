@@ -12,17 +12,23 @@ from __future__ import annotations
 
 import datetime
 import decimal
-from typing import Optional  # sqlacodegen-style; clean up to `X | None` in a ratchet
+from typing import TYPE_CHECKING, Optional  # sqlacodegen-style; clean up to `X | None` in a ratchet
 
 from sqlalchemy import (
-    BigInteger, Boolean, CheckConstraint, Date, DateTime, Double,
+    BigInteger, Boolean, Date, DateTime, Double,
     ForeignKeyConstraint, Identity, Index, Integer, Numeric,
-    PrimaryKeyConstraint, SmallInteger, String, Text, Time, UniqueConstraint,
+    PrimaryKeyConstraint, String, Text, Time, UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from agri.db.base import AgriBase
+
+if TYPE_CHECKING:
+    # Forward-ref target for the user-side relationships/annotations below.
+    # Cross-module string refs resolve via the shared AgriBase registry at
+    # runtime; this import only satisfies static analysis (no runtime cycle).
+    from agri.db.users import CustomUserCustomuser
 
 
 class AnalyticsKcperiod(AgriBase):
