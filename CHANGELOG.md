@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.2.0 (2026-06-07)
+
+### Features
+
+- **analytics**: Add battery + signal sensor tables
+  ([#19](https://github.com/AgriLogy/agri-db/pull/19),
+  [`68eae48`](https://github.com/AgriLogy/agri-db/commit/68eae480cc2af8b087406dc134b338bc26caf8b7))
+
+Two new per-zone device-health metrics, same shape as every analytics sensor table (id, timestamp,
+  user_id, zone_id, value): * analytics_batterysensor — battery voltage (V), from LoRaWAN nodes *
+  analytics_signalsensor — RSSI (dBm), from LoRaWAN nodes + Bivocom
+
+SQLAlchemy mirrors + an idempotent Alembic migration. Lets agri-core's db_model_for resolve the new
+  'battery'/'signal' registry keys.
+
+
 ## v0.1.1 (2026-05-29)
 
 ### Bug Fixes
