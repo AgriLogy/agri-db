@@ -1129,3 +1129,41 @@ class AnalyticsKcperiodassignment(AgriBase):
 
     kc: Mapped['AnalyticsKc'] = relationship('AnalyticsKc', back_populates='analytics_kcperiodassignment')
     period: Mapped['AnalyticsKcperiod'] = relationship('AnalyticsKcperiod', back_populates='analytics_kcperiodassignment')
+
+
+class AnalyticsBatterysensor(AgriBase):
+    """Device battery voltage (V) — reported by LoRaWAN nodes."""
+
+    __tablename__ = 'analytics_batterysensor'
+    __table_args__ = (
+        ForeignKeyConstraint(['user_id'], ['CustomUser_customuser.id'], deferrable=True, initially='DEFERRED', name='analytics_batterysensor_user_id_fk'),
+        ForeignKeyConstraint(['zone_id'], ['analytics_zone.id'], deferrable=True, initially='DEFERRED', name='analytics_batterysensor_zone_id_fk'),
+        PrimaryKeyConstraint('id', name='analytics_batterysensor_pkey'),
+        Index('analytics_batterysensor_user_id', 'user_id'),
+        Index('analytics_batterysensor_zone_id', 'zone_id')
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1), primary_key=True)
+    timestamp: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    zone_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    value: Mapped[Optional[float]] = mapped_column(Double(53))
+
+
+class AnalyticsSignalsensor(AgriBase):
+    """Device radio signal strength, RSSI (dBm) — LoRaWAN nodes + Bivocom gateways."""
+
+    __tablename__ = 'analytics_signalsensor'
+    __table_args__ = (
+        ForeignKeyConstraint(['user_id'], ['CustomUser_customuser.id'], deferrable=True, initially='DEFERRED', name='analytics_signalsensor_user_id_fk'),
+        ForeignKeyConstraint(['zone_id'], ['analytics_zone.id'], deferrable=True, initially='DEFERRED', name='analytics_signalsensor_zone_id_fk'),
+        PrimaryKeyConstraint('id', name='analytics_signalsensor_pkey'),
+        Index('analytics_signalsensor_user_id', 'user_id'),
+        Index('analytics_signalsensor_zone_id', 'zone_id')
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1), primary_key=True)
+    timestamp: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    zone_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    value: Mapped[Optional[float]] = mapped_column(Double(53))
