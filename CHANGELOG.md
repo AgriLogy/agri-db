@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.3.0 (2026-06-17)
+
+### Features
+
+- **users**: Notify_every hours->minutes backfill (x60) + default 240
+  ([#23](https://github.com/AgriLogy/agri-db/pull/23),
+  [`cb2c06a`](https://github.com/AgriLogy/agri-db/commit/cb2c06ab4b8bdbc6d5d9f681c74e1996bab9a869))
+
+Migration c7e1a9f3b502 (down_revision b7f2a4c1d9e3): scale existing notify_every values x60
+  (4h->240min, clamped to 10080), set column default 240. SQLAlchemy model server_default aligned.
+  Pairs with agri-api minutes cadence + agri-admin minutes UI; apply this FIRST in the deploy order.
+
+
 ## v0.2.0 (2026-06-07)
 
 ### Features
