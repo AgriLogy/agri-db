@@ -192,6 +192,12 @@ class CustomUserCustomuser(AgriBase):
     last_notified: Mapped[datetime.datetime | None] = mapped_column(
         DateTime(timezone=True)
     )
+    # Admin-controlled session kill switch. Any access/refresh token issued
+    # (iat) before this timestamp is rejected, forcing the user to log out.
+    # NULL = never revoked.
+    sessions_revoked_at: Mapped[datetime.datetime | None] = mapped_column(
+        DateTime(timezone=True)
+    )
 
     # Backrefs from the M2M tables modeled below
     group_memberships: Mapped[list["CustomUserCustomuserGroups"]] = relationship(
