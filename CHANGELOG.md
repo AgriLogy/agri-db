@@ -1,6 +1,35 @@
 # CHANGELOG
 
 
+## v0.4.0 (2026-06-21)
+
+### Chores
+
+- **ci**: Auto-assign new issues and PRs to mks-zakaria
+  ([#25](https://github.com/AgriLogy/agri-db/pull/25),
+  [`0d34274`](https://github.com/AgriLogy/agri-db/commit/0d342748338c5e8641c477362e211bddd2e80636))
+
+### Continuous Integration
+
+- Fix Auto Assign workflow failing on pull_request events
+  ([#27](https://github.com/AgriLogy/agri-db/pull/27),
+  [`fc38563`](https://github.com/AgriLogy/agri-db/commit/fc38563420d67b06e229300a008e32f43ff2f1ed))
+
+Replace pozil/auto-assign-issue@v1 (which errors with "Couldn't find issue info in current context"
+  on pull_request, and warns on the invalid numOfAssignee input) with a single gh-api call to the
+  issues/assignees endpoint, which assigns both issues and PRs since a PR shares its repo's
+  issue-number space.
+
+### Features
+
+- Add CustomUser.sessions_revoked_at session kill switch
+  ([`edc2ede`](https://github.com/AgriLogy/agri-db/commit/edc2edef7fa03cd7ae628ba26012d64a54768653))
+
+New nullable TIMESTAMPTZ column backing the admin force-logout / disable feature. Any JWT whose iat
+  predates this timestamp is rejected by agri-api, forcing the user to log out. Adds the SQLAlchemy
+  column + an idempotent Alembic migration mirrored by the Django field.
+
+
 ## v0.3.0 (2026-06-17)
 
 ### Features
