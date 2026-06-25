@@ -1,6 +1,18 @@
 # CHANGELOG
 
 
+## v0.9.0 (2026-06-25)
+
+### Features
+
+- **alert**: Add grace_override_seconds column ([#38](https://github.com/AgriLogy/agri-db/pull/38),
+  [`6f9b297`](https://github.com/AgriLogy/agri-db/commit/6f9b297321755754896d912d873271cae349a107))
+
+Per-alert grace override (agri-api #37): an optional per-alert re-notify cadence that beats the
+  global ALERT_GRACE_PERIODS[sensor_key] when set. Migration a7b8c9d0e1f2 (idempotent) off head
+  f3a4b5c6d7e8; mirror updated.
+
+
 ## v0.8.0 (2026-06-25)
 
 ### Features
