@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.7.0 (2026-06-25)
+
+### Features
+
+- **notifications**: Custom notification zones + alert notify_sms
+  ([#34](https://github.com/AgriLogy/agri-db/pull/34),
+  [`c4b044a`](https://github.com/AgriLogy/agri-db/commit/c4b044adb513ee829d98ec66c697e4b65e665c84))
+
+Custom notification zones (agrilogy-front #57): analytics_notificationzone (user-owned alert
+  grouping, independent of farm analytics_zone) + analytics_notificationzonesensor (sensor_key +
+  source_zone_id stream), plus analytics_alert.notification_zone_id (alert binds to a farm zone XOR
+  a notification zone) and analytics_alert.notify_sms. Migration e2f3a4b5c6d7 (idempotent) revises
+  head d1e2f3a4b5c6; SQLAlchemy mirrors added.
+
+
 ## v0.6.0 (2026-06-25)
 
 ### Features
