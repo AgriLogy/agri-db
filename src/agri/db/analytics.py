@@ -220,6 +220,7 @@ class AnalyticsActivegraph(AgriBase):
     water_flow_status: Mapped[bool] = mapped_column(Boolean, nullable=False)
     water_ph_status: Mapped[bool] = mapped_column(Boolean, nullable=False)
     water_pressure_status: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    water_level_status: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
     cumulative_precipitation_status: Mapped[bool] = mapped_column(Boolean, nullable=False)
     precipitation_rate_status: Mapped[bool] = mapped_column(Boolean, nullable=False)
     weather_temperature_humidity_status: Mapped[bool] = mapped_column(Boolean, nullable=False)
