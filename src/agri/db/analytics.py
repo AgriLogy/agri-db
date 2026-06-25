@@ -139,6 +139,7 @@ class AnalyticsZone(AgriBase):
     soil_param_RAW: Mapped[float] = mapped_column(Double(53), nullable=False)
     soil_param_TAW: Mapped[float] = mapped_column(Double(53), nullable=False)
     soil_param_WP: Mapped[float] = mapped_column(Double(53), nullable=False)
+    elevation_m: Mapped[float] = mapped_column(Double(53), nullable=False, server_default=text('0'))
 
     user: Mapped['CustomUserCustomuser'] = relationship('CustomUserCustomuser', back_populates='analytics_zone')
     analytics_activegraph: Mapped[list['AnalyticsActivegraph']] = relationship('AnalyticsActivegraph', back_populates='zone')
