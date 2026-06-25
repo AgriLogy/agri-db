@@ -1,6 +1,22 @@
 # CHANGELOG
 
 
+## v0.5.0 (2026-06-25)
+
+### Features
+
+- **alert**: Add notify_email + notify_whatsapp columns
+  ([#30](https://github.com/AgriLogy/agri-db/pull/30),
+  [`519b475`](https://github.com/AgriLogy/agri-db/commit/519b475b6c7033f1ddf9e69c632e1c1447e00664))
+
+Per-alert delivery channels. Alembic migration c4d8e1f02a37 (idempotent ADD COLUMN IF NOT EXISTS,
+  revises head 31d37a9a428c) adds notify_email BOOLEAN NOT NULL DEFAULT TRUE + notify_whatsapp
+  BOOLEAN NOT NULL DEFAULT FALSE to analytics_alert. AnalyticsAlert SQLAlchemy mirror updated (+ the
+  missing last_emailed_at to cut drift). Mirrors Django analytics.0061.
+
+Closes #20
+
+
 ## v0.4.0 (2026-06-21)
 
 ### Chores
