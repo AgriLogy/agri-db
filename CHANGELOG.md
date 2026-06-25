@@ -1,6 +1,18 @@
 # CHANGELOG
 
 
+## v0.8.0 (2026-06-25)
+
+### Features
+
+- **users**: Add preferred_language column ([#36](https://github.com/AgriLogy/agri-db/pull/36),
+  [`ddc922d`](https://github.com/AgriLogy/agri-db/commit/ddc922d8188a98265c0a1f5abc9f59e83d1348c4))
+
+Per-user notification language (agri-api #31). Migration f3a4b5c6d7e8 (idempotent ADD COLUMN IF NOT
+  EXISTS preferred_language VARCHAR(8) NOT NULL DEFAULT 'fr', revises head e2f3a4b5c6d7) on
+  CustomUser_customuser; mirror updated. Mirrors the Django CustomUser.preferred_language field.
+
+
 ## v0.7.0 (2026-06-25)
 
 ### Features
