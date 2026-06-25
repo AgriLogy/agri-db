@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.10.0 (2026-06-25)
+
+### Features
+
+- **activegraph**: Add water_level_status visibility flag
+  ([#40](https://github.com/AgriLogy/agri-db/pull/40),
+  [`28b0341`](https://github.com/AgriLogy/agri-db/commit/28b0341faf6372b0113567f305a92217a2043759))
+
+Per-zone toggle for the water-level dashboard section (agrilogy-front #4 follow-up), mirroring the
+  existing *_status flags on analytics_activegraph. Migration b8c9d0e1f2a3 (idempotent) off head
+  a7b8c9d0e1f2; mirror updated.
+
+
 ## v0.9.0 (2026-06-25)
 
 ### Features
