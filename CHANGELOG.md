@@ -1,6 +1,25 @@
 # CHANGELOG
 
 
+## v0.6.0 (2026-06-25)
+
+### Features
+
+- **zone**: Add elevation_m + merge divergent alembic heads
+  ([#32](https://github.com/AgriLogy/agri-db/pull/32),
+  [`3bd8d9b`](https://github.com/AgriLogy/agri-db/commit/3bd8d9b5e6eb421e90aae51591fe39bb1e3678b0))
+
+Adds analytics_zone.elevation_m (DOUBLE, default 0, metres) so the agronomy clear-sky radiation Rso
+  = (0.75 + 2e-5*elevation_m)*Ra is correct away from sea level. AnalyticsZone SQLAlchemy mirror
+  updated.
+
+Migration d1e2f3a4b5c6 also merges the three heads that had diverged off 31d37a9a428c
+  (sessions_revoked_at / notify channels / notify-minutes) so 'alembic upgrade head' resolves to one
+  head again.
+
+Supports agri-api #15.
+
+
 ## v0.5.0 (2026-06-25)
 
 ### Features
