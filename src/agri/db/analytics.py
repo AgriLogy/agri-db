@@ -252,6 +252,7 @@ class AnalyticsAlert(AgriBase):
     notify_email: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('true'))
     notify_whatsapp: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
     notify_sms: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
+    grace_override_seconds: Mapped[Optional[int]] = mapped_column(Integer)
     user_id: Mapped[Optional[int]] = mapped_column(BigInteger)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     last_triggered_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
