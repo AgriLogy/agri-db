@@ -180,6 +180,10 @@ class CustomUserCustomuser(AgriBase):
     notify_every: Mapped[int] = mapped_column(
         SmallInteger, nullable=False, server_default=text("240")
     )
+    # Preferred language for outbound notifications (and UI). 'fr' | 'ar'.
+    preferred_language: Mapped[str] = mapped_column(
+        String(8), nullable=False, server_default=text("'fr'")
+    )
     date_joined: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), nullable=False
     )
