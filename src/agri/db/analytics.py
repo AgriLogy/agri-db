@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Optional  # sqlacodegen-style; clean up to `X 
 from sqlalchemy import (
     BigInteger, Boolean, Date, DateTime, Double,
     ForeignKeyConstraint, Identity, Index, Integer, Numeric,
-    PrimaryKeyConstraint, String, Text, Time, UniqueConstraint,
+    PrimaryKeyConstraint, String, Text, Time, UniqueConstraint, text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -246,9 +246,12 @@ class AnalyticsAlert(AgriBase):
     condition_nbr: Mapped[decimal.Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False)
     sensor_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    notify_email: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('true'))
+    notify_whatsapp: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
     user_id: Mapped[Optional[int]] = mapped_column(BigInteger)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     last_triggered_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    last_emailed_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
 
