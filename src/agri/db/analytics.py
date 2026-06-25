@@ -234,9 +234,11 @@ class AnalyticsAlert(AgriBase):
     __table_args__ = (
         ForeignKeyConstraint(['user_id'], ['CustomUser_customuser.id'], deferrable=True, initially='DEFERRED', name='analytics_alert_user_id_dc15c219_fk_CustomUser_customuser_id'),
         ForeignKeyConstraint(['zone_id'], ['analytics_zone.id'], deferrable=True, initially='DEFERRED', name='analytics_alert_zone_id_8b2af397_fk_analytics_zone_id'),
+        ForeignKeyConstraint(['notification_zone_id'], ['analytics_notificationzone.id'], deferrable=True, initially='DEFERRED', name='analytics_alert_notification_zone_id_fk'),
         PrimaryKeyConstraint('id', name='analytics_alert_pkey'),
         Index('analytics_alert_user_id_dc15c219', 'user_id'),
-        Index('analytics_alert_zone_id_8b2af397', 'zone_id')
+        Index('analytics_alert_zone_id_8b2af397', 'zone_id'),
+        Index('analytics_alert_notification_zone_id_idx', 'notification_zone_id')
     )
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1), primary_key=True)
@@ -249,15 +251,65 @@ class AnalyticsAlert(AgriBase):
     sensor_key: Mapped[str] = mapped_column(String(64), nullable=False)
     notify_email: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('true'))
     notify_whatsapp: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
+    notify_sms: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('false'))
     user_id: Mapped[Optional[int]] = mapped_column(BigInteger)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     last_triggered_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     last_emailed_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    notification_zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
 
     user: Mapped[Optional['CustomUserCustomuser']] = relationship('CustomUserCustomuser', back_populates='analytics_alert')
     zone: Mapped[Optional['AnalyticsZone']] = relationship('AnalyticsZone', back_populates='analytics_alert')
+    notification_zone: Mapped[Optional['AnalyticsNotificationzone']] = relationship('AnalyticsNotificationzone', back_populates='analytics_alert')
+
+
+class AnalyticsNotificationzone(AgriBase):
+    """User-owned alert grouping independent of the farm ``analytics_zone`` rows
+    (agrilogy-front #57). Sensors are attached via ``AnalyticsNotificationzonesensor``;
+    an ``AnalyticsAlert`` may bind here instead of to a farm zone."""
+
+    __tablename__ = 'analytics_notificationzone'
+    __table_args__ = (
+        ForeignKeyConstraint(['user_id'], ['CustomUser_customuser.id'], deferrable=True, initially='DEFERRED', name='analytics_notificationzone_user_id_fk'),
+        PrimaryKeyConstraint('id', name='analytics_notificationzone_pkey'),
+        Index('analytics_notificationzone_user_id_idx', 'user_id'),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1), primary_key=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("''"))
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('true'))
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+
+    sensors: Mapped[list['AnalyticsNotificationzonesensor']] = relationship('AnalyticsNotificationzonesensor', back_populates='notification_zone')
+    analytics_alert: Mapped[list['AnalyticsAlert']] = relationship('AnalyticsAlert', back_populates='notification_zone')
+
+
+class AnalyticsNotificationzonesensor(AgriBase):
+    """One sensor stream assigned to a notification zone: ``sensor_key`` read from
+    farm zone ``source_zone_id`` (null = the user-wide latest reading)."""
+
+    __tablename__ = 'analytics_notificationzonesensor'
+    __table_args__ = (
+        ForeignKeyConstraint(['notification_zone_id'], ['analytics_notificationzone.id'], ondelete='CASCADE', deferrable=True, initially='DEFERRED', name='analytics_notificationzonesensor_zone_id_fk'),
+        ForeignKeyConstraint(['source_zone_id'], ['analytics_zone.id'], ondelete='SET NULL', deferrable=True, initially='DEFERRED', name='analytics_notificationzonesensor_source_zone_id_fk'),
+        PrimaryKeyConstraint('id', name='analytics_notificationzonesensor_pkey'),
+        Index('analytics_notificationzonesensor_zone_idx', 'notification_zone_id'),
+        Index('analytics_notificationzonesensor_source_idx', 'source_zone_id'),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1), primary_key=True)
+    sensor_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    label: Mapped[Optional[str]] = mapped_column(String(200))
+    notification_zone_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    source_zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+
+    notification_zone: Mapped['AnalyticsNotificationzone'] = relationship('AnalyticsNotificationzone', back_populates='sensors')
+    source_zone: Mapped[Optional['AnalyticsZone']] = relationship('AnalyticsZone')
 
 
 class AnalyticsEcsalinitysensor(AgriBase):
