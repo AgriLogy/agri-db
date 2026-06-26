@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.11.0 (2026-06-26)
+
+### Features
+
+- **activegraph**: Default water_level_status to TRUE + backfill
+  ([#42](https://github.com/AgriLogy/agri-db/pull/42),
+  [`1934490`](https://github.com/AgriLogy/agri-db/commit/1934490ea2f5f3b7d6f32ae49233ddfa36a6ebf7))
+
+Align the water-level section with every other ActiveGraph *_status flag (all default TRUE).
+  Migration c9d0e1f2a3b4 flips the column default to TRUE and backfills existing rows; mirror
+  server_default updated.
+
+
 ## v0.10.0 (2026-06-25)
 
 ### Features
