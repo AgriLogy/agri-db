@@ -1,6 +1,32 @@
 # CHANGELOG
 
 
+## v0.11.1 (2026-06-28)
+
+### Bug Fixes
+
+- **migrations**: Make 'upgrade head' work on an empty DB + add empty-DB gate
+  ([#44](https://github.com/AgriLogy/agri-db/pull/44),
+  [`95c6f59`](https://github.com/AgriLogy/agri-db/commit/95c6f597b3f1c34986827d24f06054389dd33aaf))
+
+* fix(migrations): make upgrade head work on an empty DB + add empty-DB gate (#43)
+
+The baseline migration ran a pg_dump whose preamble blanks search_path, so Alembic's unqualified
+  INSERT INTO alembic_version failed and 'upgrade head' never completed on a fresh DB. downgrade
+  base hit the mirror problem (DROP SCHEMA CASCADE removed alembic_version before the bookkeeping
+  DELETE).
+
+- baseline upgrade(): SET search_path TO public after the dump. - baseline downgrade(): recreate
+  alembic_version after the schema wipe. - scripts/migrate_test.sh + make migrate-test: apply the
+  whole chain to a throwaway empty postgres:17 in Docker (upgrade + round-trip + drift). -
+  .github/workflows/migrations.yml: same sequence on PR + push via a Postgres service container, so
+  a broken migration fails CI.
+
+Closes #43.
+
+* ci(migrations): bump uv to 0.11.6 so it can parse uv.lock revision 3
+
+
 ## v0.11.0 (2026-06-26)
 
 ### Features
