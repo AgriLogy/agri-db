@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.12.0 (2026-06-28)
+
+### Features
+
+- **schema**: Add analytics_devicesensor for router sensor mapping (#45)
+  ([#46](https://github.com/AgriLogy/agri-db/pull/46),
+  [`8a7029c`](https://github.com/AgriLogy/agri-db/commit/8a7029cde07c763af80dbe74a52085cddaccaf0d))
+
+One row maps a registered router's wire tag (e.g. a Bivocom Modbus tag) to a sensor_key + farm zone,
+  so an admin can onboard a router's sensors as data with no per-device code. device_id is a soft FK
+  (analytics_device is Django-managed, not mirrored here); zone_id FKs analytics_zone ON DELETE SET
+  NULL; unique(device_id, tag_name).
+
+SQLAlchemy model + migration; make migrate-test green on an empty DB.
+
+Closes #45.
+
+
 ## v0.11.1 (2026-06-28)
 
 ### Bug Fixes
