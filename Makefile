@@ -5,13 +5,16 @@
 ALEMBIC_INI := src/agri/db/_migrations/alembic.ini
 ALEMBIC      := uv run alembic -c $(ALEMBIC_INI)
 
-.PHONY: help install new upgrade-dev upgrade-prod current-dev current-prod \
+.PHONY: help install new migrate-test upgrade-dev upgrade-prod current-dev current-prod \
         history-dev history-prod stamp-dev-head stamp-prod-head check-dev
 
 help:
 	@echo "Targets:"
 	@echo "  install         uv sync the repo"
 	@echo "  new MSG=...     create a new revision (alembic revision -m '...')"
+	@echo "  migrate-test    apply the whole chain to a throwaway empty Postgres"
+	@echo "                  in Docker (upgrade + round-trip + drift check)."
+	@echo "                  RUN THIS BEFORE PUSHING a migration."
 	@echo "  upgrade-dev     apply pending migrations to Supabase dev"
 	@echo "  upgrade-prod    apply pending migrations to Supabase prod"
 	@echo "  current-dev     show current head on dev"
@@ -24,6 +27,9 @@ help:
 
 install:
 	uv sync
+
+migrate-test:
+	@bash scripts/migrate_test.sh
 
 new:
 	@test -n "$(MSG)" || (echo "MSG is required: make new MSG='describe change'"; exit 1)
