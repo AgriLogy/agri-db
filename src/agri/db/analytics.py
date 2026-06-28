@@ -314,6 +314,33 @@ class AnalyticsNotificationzonesensor(AgriBase):
     source_zone: Mapped[Optional['AnalyticsZone']] = relationship('AnalyticsZone')
 
 
+class AnalyticsDevicesensor(AgriBase):
+    """One physical sensor carried by a registered router/gateway. Maps a device's
+    wire tag (e.g. a Bivocom Modbus tag like ``ta``) to a ``sensor_key`` and the farm
+    zone its readings belong to (null = the device's own zone). Lets an admin onboard
+    a router's sensors as DATA — no per-device code. ``device_id`` is a soft FK:
+    ``analytics_device`` is a Django-managed table, not mirrored here."""
+
+    __tablename__ = 'analytics_devicesensor'
+    __table_args__ = (
+        ForeignKeyConstraint(['zone_id'], ['analytics_zone.id'], ondelete='SET NULL', deferrable=True, initially='DEFERRED', name='analytics_devicesensor_zone_id_fk'),
+        PrimaryKeyConstraint('id', name='analytics_devicesensor_pkey'),
+        UniqueConstraint('device_id', 'tag_name', name='analytics_devicesensor_device_tag_uniq'),
+        Index('analytics_devicesensor_device_idx', 'device_id'),
+        Index('analytics_devicesensor_zone_idx', 'zone_id'),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1), primary_key=True)
+    device_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    tag_name: Mapped[str] = mapped_column(String(64), nullable=False)
+    sensor_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text('true'))
+    zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+
+    zone: Mapped[Optional['AnalyticsZone']] = relationship('AnalyticsZone')
+
+
 class AnalyticsEcsalinitysensor(AgriBase):
     __tablename__ = 'analytics_ecsalinitysensor'
     __table_args__ = (
