@@ -1,6 +1,48 @@
 # CHANGELOG
 
 
+## v0.14.1 (2026-07-02)
+
+### Bug Fixes
+
+- **ci**: Pass secrets:inherit so apply-migrations sees the environment DATABASE_URL
+  ([#57](https://github.com/AgriLogy/agri-db/pull/57),
+  [`90aad31`](https://github.com/AgriLogy/agri-db/commit/90aad31a76cff227676edfcd29a530424d34bc8e))
+
+### Continuous Integration
+
+- Adopt AgriLogy/shared-workflows callers ([#54](https://github.com/AgriLogy/agri-db/pull/54),
+  [`b2de9ec`](https://github.com/AgriLogy/agri-db/commit/b2de9ec9da8f430e23acbe871d10c7c153b443cd))
+
+* style: ruff-format the package (prep for the shared lint gate)
+
+Mechanical 'uv run ruff format' across src/ so the incoming python-lint.yml@v1 caller (ruff check +
+  ruff format --check) starts green. No behavioral change; import + alembic heads verified.
+
+* ci: adopt AgriLogy/shared-workflows callers
+
+Swap every workflow to a thin caller of the shared @v1 reusable workflows (triggers/concurrency stay
+  caller-side, logic upstream):
+
+- migrations.yml -> migrations-gate.yml@v1 (same PR + main triggers) - apply-test.yml ->
+  apply-migrations.yml@v1 (environment: test, dry_run: false, same versions/** push-paths trigger)
+
+- NEW apply-dev.yml / apply-prod.yml: manual dispatch with a dry_run input (default true) ->
+  apply-migrations.yml@v1 against the dev / prod environments; prod documented as not operational
+  (no DATABASE_URL secret + MIGRATIONS_PROD_CUTOVER runbook must run first) - release.yml ->
+  release.yml@v1 (install_uv, uv 0.5.7 -> 0.11.6, [skip ci] guard + concurrency kept caller-side) -
+  auto-assign.yml -> auto-assign.yml@v1 - NEW lint-pr-title.yml -> lint-pr-title.yml@v1
+  (Conventional-Commit PR-title gate; squash title = release input) - NEW primary.yml ->
+  python-lint.yml@v1 (ruff check + format gate) - drift-check.yml stays self-contained: no shared
+  drift workflow yet (noted as upstream candidate)
+
+Plus: requires-python >=3.12 (matches the shared workflows' Python) with uv.lock re-resolved, and
+  ONBOARDING.md documenting the schema-of-record role, the migration promotion flow (gate -> merge
+  -> auto-apply test -> dispatch dev/prod) and the environments table.
+
+* chore: re-fire ci
+
+
 ## v0.14.0 (2026-07-02)
 
 ### Continuous Integration
