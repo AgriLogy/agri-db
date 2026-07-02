@@ -20,3 +20,4 @@ from agri.db.base import AgriBase  # noqa: F401
 # module to this list AND verify `make check-dev` stays clean.
 from agri.db.users import *      # noqa: F401, F403
 from agri.db.analytics import *  # noqa: F401, F403  (Phase 4c — 47 tables)
+from agri.db.feedback import *   # noqa: F401, F403  (in-app bug reports)
