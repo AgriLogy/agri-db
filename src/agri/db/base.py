@@ -9,6 +9,7 @@ SQLAlchemy 2.0 style — uses ``DeclarativeBase`` instead of
 
 Pattern follows the ``RevlyBase`` mixin from full-stack/data-model-main.
 """
+
 from __future__ import annotations
 
 from typing import Any

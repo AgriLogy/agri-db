@@ -6,6 +6,7 @@ Absorbed from agri-api's out-of-band boot script
 schema: all relations are ORM-level in agri-api (Django ``db_constraint=False``)
 so there are NO DB-level foreign keys, and no DB defaults.
 """
+
 from __future__ import annotations
 
 import datetime
@@ -33,18 +34,25 @@ class AnalyticsIrrigationprogram(AgriBase):
     at a start time, for a duration (or target volume). agri-api's beat task
     ``run_due_irrigation_programs`` turns due programs into output commands."""
 
-    __tablename__ = 'analytics_irrigationprogram'
+    __tablename__ = "analytics_irrigationprogram"
     __table_args__ = (
         CheckConstraint(
-            'duration_min >= 0',
-            name='analytics_irrigationprogram_duration_min_check',
+            "duration_min >= 0",
+            name="analytics_irrigationprogram_duration_min_check",
         ),
-        PrimaryKeyConstraint('id', name='analytics_irrigationprogram_pkey'),
+        PrimaryKeyConstraint("id", name="analytics_irrigationprogram_pkey"),
     )
 
     id: Mapped[int] = mapped_column(
         BigInteger,
-        Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1),
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
         primary_key=True,
     )
     user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
@@ -67,14 +75,19 @@ class AnalyticsOutputcommand(AgriBase):
     """A command to an output device (valve/pump) for a zone, created manually
     or by the scheduler. status: pending|simulated|sent|failed."""
 
-    __tablename__ = 'analytics_outputcommand'
-    __table_args__ = (
-        PrimaryKeyConstraint('id', name='analytics_outputcommand_pkey'),
-    )
+    __tablename__ = "analytics_outputcommand"
+    __table_args__ = (PrimaryKeyConstraint("id", name="analytics_outputcommand_pkey"),)
 
     id: Mapped[int] = mapped_column(
         BigInteger,
-        Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1),
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
         primary_key=True,
     )
     user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
@@ -82,7 +95,9 @@ class AnalyticsOutputcommand(AgriBase):
     device_id: Mapped[Optional[int]] = mapped_column(BigInteger)
     action: Mapped[str] = mapped_column(String(8), nullable=False)  # open|close
     source: Mapped[str] = mapped_column(String(12), nullable=False)  # manual|scheduled
-    status: Mapped[str] = mapped_column(String(12), nullable=False)  # pending|simulated|sent|failed
+    status: Mapped[str] = mapped_column(
+        String(12), nullable=False
+    )  # pending|simulated|sent|failed
     detail: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     dispatched_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))

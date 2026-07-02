@@ -1,0 +1,30 @@
+name: apply-dev
+
+# Manually apply (or dry-run render) the Alembic chain against the DEV
+# database (`dev` GitHub Environment's DATABASE_URL = Supabase dev).
+# Dry-run is the default: it renders the SQL that WOULD run into the step
+# summary without touching the database. Dispatch again with dry_run=false
+# to actually apply (the CI twin of `make upgrade-dev`).
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Render SQL only (no changes). Set to false to apply."
+        type: boolean
+        default: true
+
+concurrency:
+  group: apply-dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  apply:
+    uses: AgriLogy/shared-workflows/.github/workflows/apply-migrations.yml@v1
+    with:
+      environment: dev
+      dry_run: ${{ inputs.dry_run }}
+      alembic_ini: src/agri/db/_migrations/alembic.ini

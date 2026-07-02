@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "agri-db"
 dynamic = ["version"]  # sourced from agri.db._version; owned by semantic-release
 description = "Schema-of-record for the Agrilogy Supabase Postgres. Source of truth for all DB migrations across the Django and (future) FastAPI backends."
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.14",
     "sqlalchemy>=2.0",

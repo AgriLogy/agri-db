@@ -35,15 +35,13 @@ def upgrade() -> None:
         "WHERE notify_every > 0"
     )
     op.execute(
-        'ALTER TABLE "CustomUser_customuser" '
-        "ALTER COLUMN notify_every SET DEFAULT 240"
+        'ALTER TABLE "CustomUser_customuser" ALTER COLUMN notify_every SET DEFAULT 240'
     )
 
 
 def downgrade() -> None:
     op.execute(
-        'ALTER TABLE "CustomUser_customuser" '
-        "ALTER COLUMN notify_every SET DEFAULT 4"
+        'ALTER TABLE "CustomUser_customuser" ALTER COLUMN notify_every SET DEFAULT 4'
     )
     op.execute(
         'UPDATE "CustomUser_customuser" '

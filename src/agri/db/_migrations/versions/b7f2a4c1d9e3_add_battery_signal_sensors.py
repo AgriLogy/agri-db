@@ -47,12 +47,8 @@ def upgrade() -> None:
             );
             """
         )
-        op.execute(
-            f"CREATE INDEX IF NOT EXISTS {table}_user_id ON {table} (user_id);"
-        )
-        op.execute(
-            f"CREATE INDEX IF NOT EXISTS {table}_zone_id ON {table} (zone_id);"
-        )
+        op.execute(f"CREATE INDEX IF NOT EXISTS {table}_user_id ON {table} (user_id);")
+        op.execute(f"CREATE INDEX IF NOT EXISTS {table}_zone_id ON {table} (zone_id);")
 
 
 def downgrade() -> None:

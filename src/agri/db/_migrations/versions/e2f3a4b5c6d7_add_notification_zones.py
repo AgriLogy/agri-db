@@ -93,8 +93,6 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.execute("ALTER TABLE analytics_alert DROP COLUMN IF EXISTS notify_sms")
-    op.execute(
-        "ALTER TABLE analytics_alert DROP COLUMN IF EXISTS notification_zone_id"
-    )
+    op.execute("ALTER TABLE analytics_alert DROP COLUMN IF EXISTS notification_zone_id")
     op.execute("DROP TABLE IF EXISTS analytics_notificationzonesensor")
     op.execute("DROP TABLE IF EXISTS analytics_notificationzone")

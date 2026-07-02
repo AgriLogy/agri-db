@@ -259,8 +259,7 @@ def upgrade() -> None:
         "ADD COLUMN IF NOT EXISTS is_technician BOOLEAN NOT NULL DEFAULT false"
     )
     op.execute(
-        'ALTER TABLE "CustomUser_customuser" '
-        "ALTER COLUMN is_technician DROP DEFAULT"
+        'ALTER TABLE "CustomUser_customuser" ALTER COLUMN is_technician DROP DEFAULT'
     )
 
 
