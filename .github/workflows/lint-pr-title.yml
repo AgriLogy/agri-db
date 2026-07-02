@@ -1,0 +1,17 @@
+name: Lint PR title
+
+# Squash-merge uses the PR title as the squashed commit message, so the PR
+# title must follow Conventional Commits — otherwise semantic-release on main
+# can't classify the change.
+# Thin caller — the logic lives in AgriLogy/shared-workflows.
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  lint:
+    uses: AgriLogy/shared-workflows/.github/workflows/lint-pr-title.yml@v1

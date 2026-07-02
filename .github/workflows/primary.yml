@@ -1,0 +1,22 @@
+name: CI
+
+# Primary lint gate: ruff check + ruff format --check via the shared
+# python-lint workflow. (Migrations have their own gate in migrations.yml.)
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    uses: AgriLogy/shared-workflows/.github/workflows/python-lint.yml@v1
+    with:
+      uv_version: "0.11.6"

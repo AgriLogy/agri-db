@@ -1,0 +1,37 @@
+name: apply-prod
+
+# Manually apply (or dry-run render) the Alembic chain against the PROD
+# database via the `prod` GitHub Environment.
+#
+# NOT OPERATIONAL YET:
+#   * the `prod` environment has NO DATABASE_URL secret — the droplet prod DB
+#     (agrydata) is not reachable/managed via environment secrets yet, so a
+#     real dispatch fails at connect time;
+#   * before the FIRST real apply, the one-time stamp cutover in
+#     agri-api/docs/MIGRATIONS_PROD_CUTOVER.md must run (prod predates the
+#     Alembic baseline — without the stamp, `upgrade head` would replay the
+#     whole chain against a populated database).
+# Dry-run (the default) is safe: it renders SQL offline without connecting.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Render SQL only (no changes). Set to false to apply."
+        type: boolean
+        default: true
+
+concurrency:
+  group: apply-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  apply:
+    uses: AgriLogy/shared-workflows/.github/workflows/apply-migrations.yml@v1
+    with:
+      environment: prod
+      dry_run: ${{ inputs.dry_run }}
+      alembic_ini: src/agri/db/_migrations/alembic.ini

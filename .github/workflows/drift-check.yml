@@ -11,9 +11,10 @@ name: drift-check
 # `prod` is intentionally absent: the droplet prod DB is not reachable/managed
 # via an environment secret yet.
 #
-# NOTE: self-contained for now. Once AgriLogy/shared-workflows ships its
-# reusable apply-migrations workflow, swap this job for a caller of
-# AgriLogy/shared-workflows/.github/workflows/apply-migrations.yml@v1.
+# NOTE: intentionally self-contained — AgriLogy/shared-workflows has no
+# drift-check workflow yet (apply-migrations.yml only applies/renders).
+# Candidate to upstream there as drift-check.yml@v1 once a second repo
+# needs it.
 
 on:
   schedule:
