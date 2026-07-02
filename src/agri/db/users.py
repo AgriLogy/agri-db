@@ -177,6 +177,10 @@ class CustomUserCustomuser(AgriBase):
     payement_status: Mapped[str] = mapped_column(String(100), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False)
     is_staff: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    # Technician RBAC flag (see agri.db.technicians). Added out-of-band on the
+    # droplet by agri-api's ensure_technician_tables.py; absorbed into Alembic.
+    # Like Django, the default (False) lives in the app layer, not the DB.
+    is_technician: Mapped[bool] = mapped_column(Boolean, nullable=False)
     notify_every: Mapped[int] = mapped_column(
         SmallInteger, nullable=False, server_default=text("240")
     )
