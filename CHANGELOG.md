@@ -1,6 +1,61 @@
 # CHANGELOG
 
 
+## v0.14.0 (2026-07-02)
+
+### Continuous Integration
+
+- **migrations**: Persistent test DB auto-apply + nightly drift check
+  ([#52](https://github.com/AgriLogy/agri-db/pull/52),
+  [`b5336f2`](https://github.com/AgriLogy/agri-db/commit/b5336f2b04eebd295ede4e7a61e262eeff6c1ddf))
+
+* feat(schema): absorb ensure-script tables into Alembic (15 tables)
+
+The live droplet creates 15 tables outside Alembic via agri-api boot scripts
+  (back/scripts/ensure_*_tables.py). Absorb them into the schema-of-record:
+
+- new domain modules billing/devices/irrigation/audit/technicians/ assistant with SQLAlchemy 2.0
+  mirrors of all 15 tables, re-exported in agri.db.__init__ - CustomUser_customuser.is_technician
+  (also created by ensure_technician_tables.py) added to the users model - migration e5f6a7b8c9d0:
+  CREATE TABLE IF NOT EXISTS DDL byte-matching the live droplet schema (pg_dump-verified: no
+  DB-level FKs, no secondary indexes — Django db_constraint=False), idempotent so existing droplet
+  DBs converge without error - fix AnalyticsAlert.notification_zone_id FK declaration to match the
+  DB (auto-named *_fkey, ON DELETE SET NULL) so 'alembic check' is drift-free at head
+
+* ci(migrations): persistent test DB auto-apply + nightly drift check
+
+Wire the repo to the new persistent TEST database (agrilogy-test Supabase project) and the
+  test/dev/prod GitHub Environments:
+
+- apply-test.yml: on push to main touching _migrations/versions/** (or manual dispatch), run
+  'alembic upgrade head' against the test environment's DATABASE_URL secret and print 'alembic
+  current' to the step summary - drift-check.yml: nightly (0 3 * * *) + manual matrix over [test,
+  dev] environments running 'alembic current' + 'alembic check', failing on ORM<->DB drift; prod
+  intentionally excluded (droplet DB not managed via environment secrets yet) - .env.test-example
+  committed placeholder (real .env.test stays gitignored; add !.env.test-example exception) -
+  Makefile: upgrade-test / current-test / check-test targets
+
+Workflows are self-contained for now; a follow-up swaps them to callers of AgriLogy/shared-workflows
+  apply-migrations@v1 once that repo exists.
+
+### Features
+
+- **schema**: Absorb ensure-script tables into Alembic (15 tables)
+  ([#55](https://github.com/AgriLogy/agri-db/pull/55),
+  [`7b7ccbb`](https://github.com/AgriLogy/agri-db/commit/7b7ccbb4dfee6131f89b60d8d83bb54357d2231c))
+
+The live droplet creates 15 tables outside Alembic via agri-api boot scripts
+  (back/scripts/ensure_*_tables.py). Absorb them into the schema-of-record:
+
+- new domain modules billing/devices/irrigation/audit/technicians/ assistant with SQLAlchemy 2.0
+  mirrors of all 15 tables, re-exported in agri.db.__init__ - CustomUser_customuser.is_technician
+  (also created by ensure_technician_tables.py) added to the users model - migration e5f6a7b8c9d0:
+  CREATE TABLE IF NOT EXISTS DDL byte-matching the live droplet schema (pg_dump-verified: no
+  DB-level FKs, no secondary indexes — Django db_constraint=False), idempotent so existing droplet
+  DBs converge without error - fix AnalyticsAlert.notification_zone_id FK declaration to match the
+  DB (auto-named *_fkey, ON DELETE SET NULL) so 'alembic check' is drift-free at head
+
+
 ## v0.13.0 (2026-07-02)
 
 ### Features
