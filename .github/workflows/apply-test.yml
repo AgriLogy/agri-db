@@ -28,3 +28,4 @@ jobs:
       environment: test
       dry_run: false
       alembic_ini: src/agri/db/_migrations/alembic.ini
+    secrets: inherit

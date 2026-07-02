@@ -35,3 +35,4 @@ jobs:
       environment: prod
       dry_run: ${{ inputs.dry_run }}
       alembic_ini: src/agri/db/_migrations/alembic.ini
+    secrets: inherit
