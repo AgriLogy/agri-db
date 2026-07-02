@@ -14,6 +14,7 @@ The full alembic CLI is also available via:
     ALEMBIC_CONFIG=$(python -c 'import agri.db._migrations as m; print(m.__path__[0]+"/alembic.ini")') \\
         alembic <args>
 """
+
 from __future__ import annotations
 
 import sys

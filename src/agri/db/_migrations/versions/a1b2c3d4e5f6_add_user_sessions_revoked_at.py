@@ -37,6 +37,5 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.execute(
-        'ALTER TABLE "CustomUser_customuser" '
-        "DROP COLUMN IF EXISTS sessions_revoked_at"
+        'ALTER TABLE "CustomUser_customuser" DROP COLUMN IF EXISTS sessions_revoked_at'
     )

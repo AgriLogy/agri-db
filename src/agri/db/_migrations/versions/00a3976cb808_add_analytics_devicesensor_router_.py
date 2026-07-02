@@ -14,8 +14,8 @@ from alembic import op
 import sqlalchemy as sa
 
 
-revision: str = '00a3976cb808'
-down_revision: Union[str, None] = 'c9d0e1f2a3b4'
+revision: str = "00a3976cb808"
+down_revision: Union[str, None] = "c9d0e1f2a3b4"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -63,7 +63,9 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index("analytics_devicesensor_zone_idx", table_name="analytics_devicesensor")
+    op.drop_index(
+        "analytics_devicesensor_zone_idx", table_name="analytics_devicesensor"
+    )
     op.drop_index(
         "analytics_devicesensor_device_idx", table_name="analytics_devicesensor"
     )

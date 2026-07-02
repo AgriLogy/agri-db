@@ -25,7 +25,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.execute(
-        "ALTER TABLE \"CustomUser_customuser\" "
+        'ALTER TABLE "CustomUser_customuser" '
         "ADD COLUMN IF NOT EXISTS preferred_language VARCHAR(8) NOT NULL DEFAULT 'fr'"
     )
 

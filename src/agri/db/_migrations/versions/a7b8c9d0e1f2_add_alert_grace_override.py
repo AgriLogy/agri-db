@@ -34,4 +34,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.execute("ALTER TABLE analytics_alert DROP COLUMN IF EXISTS grace_override_seconds")
+    op.execute(
+        "ALTER TABLE analytics_alert DROP COLUMN IF EXISTS grace_override_seconds"
+    )

@@ -8,6 +8,7 @@ Absorbed from agri-api's out-of-band boot script
 schema: all relations are ORM-level in agri-api (Django ``db_constraint=False``)
 so there are NO DB-level foreign keys, and no DB defaults.
 """
+
 from __future__ import annotations
 
 import datetime
@@ -30,15 +31,22 @@ from agri.db.base import AgriBase
 class AnalyticsTechniciangrant(AgriBase):
     """Links a technician login to the farm owner whose data it may read."""
 
-    __tablename__ = 'analytics_techniciangrant'
+    __tablename__ = "analytics_techniciangrant"
     __table_args__ = (
-        PrimaryKeyConstraint('id', name='analytics_techniciangrant_pkey'),
-        UniqueConstraint('technician_id', 'owner_id', name='uniq_technician_owner'),
+        PrimaryKeyConstraint("id", name="analytics_techniciangrant_pkey"),
+        UniqueConstraint("technician_id", "owner_id", name="uniq_technician_owner"),
     )
 
     id: Mapped[int] = mapped_column(
         BigInteger,
-        Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1),
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
         primary_key=True,
     )
     technician_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
@@ -54,15 +62,22 @@ class AnalyticsTechnicianzonegrant(AgriBase):
     ``water_flow_status``); effective visibility = granted ∩ owner-enabled.
     """
 
-    __tablename__ = 'analytics_technicianzonegrant'
+    __tablename__ = "analytics_technicianzonegrant"
     __table_args__ = (
-        PrimaryKeyConstraint('id', name='analytics_technicianzonegrant_pkey'),
-        UniqueConstraint('grant_id', 'zone_id', name='uniq_grant_zone'),
+        PrimaryKeyConstraint("id", name="analytics_technicianzonegrant_pkey"),
+        UniqueConstraint("grant_id", "zone_id", name="uniq_grant_zone"),
     )
 
     id: Mapped[int] = mapped_column(
         BigInteger,
-        Identity(start=1, increment=1, minvalue=1, maxvalue=9223372036854775807, cycle=False, cache=1),
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
         primary_key=True,
     )
     grant_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
