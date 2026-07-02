@@ -1,0 +1,59 @@
+name: drift-check
+
+# Nightly schema-drift gate over the persistent databases.
+#
+# For each GitHub Environment in the matrix (test, dev) this runs:
+#   1. `alembic current`  — surfaces the DB's revision in the step summary
+#   2. `alembic check`    — FAILS if the ORM metadata and the live schema
+#                            disagree (i.e. someone changed the DB out-of-band
+#                            or a model landed without its migration)
+#
+# `prod` is intentionally absent: the droplet prod DB is not reachable/managed
+# via an environment secret yet.
+#
+# NOTE: self-contained for now. Once AgriLogy/shared-workflows ships its
+# reusable apply-migrations workflow, swap this job for a caller of
+# AgriLogy/shared-workflows/.github/workflows/apply-migrations.yml@v1.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [test, dev]
+    environment: ${{ matrix.environment }}
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ALEMBIC_INI: src/agri/db/_migrations/alembic.ini
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          # uv.lock is revision 3 — needs a modern uv.
+          version: "0.11.6"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: alembic current -> step summary
+        run: |
+          {
+            echo "## ${{ matrix.environment }} database revision"
+            echo
+            echo '```'
+            uv run alembic -c "$ALEMBIC_INI" current
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: alembic check (fail on drift)
+        run: uv run alembic -c "$ALEMBIC_INI" check
