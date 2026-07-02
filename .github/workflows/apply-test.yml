@@ -1,0 +1,56 @@
+name: apply-test
+
+# Auto-apply merged migrations to the persistent TEST database.
+#
+# Fires when a migration lands on main (or manually via workflow_dispatch) and
+# runs `alembic upgrade head` against the `test` GitHub Environment, whose
+# DATABASE_URL secret points at the agrilogy-test Supabase project.
+#
+# NOTE: self-contained for now. Once AgriLogy/shared-workflows ships its
+# reusable apply-migrations workflow, swap this job for a caller of
+# AgriLogy/shared-workflows/.github/workflows/apply-migrations.yml@v1.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/agri/db/_migrations/versions/**"
+  workflow_dispatch:
+
+concurrency:
+  group: apply-test
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    environment: test
+
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ALEMBIC_INI: src/agri/db/_migrations/alembic.ini
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          # uv.lock is revision 3 — needs a modern uv.
+          version: "0.11.6"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: alembic upgrade head
+        run: uv run alembic -c "$ALEMBIC_INI" upgrade head
+
+      - name: alembic current -> step summary
+        run: |
+          {
+            echo "## test database head"
+            echo
+            echo '```'
+            uv run alembic -c "$ALEMBIC_INI" current
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

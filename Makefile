@@ -5,7 +5,8 @@
 ALEMBIC_INI := src/agri/db/_migrations/alembic.ini
 ALEMBIC      := uv run alembic -c $(ALEMBIC_INI)
 
-.PHONY: help install new migrate-test upgrade-dev upgrade-prod current-dev current-prod \
+.PHONY: help install new migrate-test upgrade-test current-test check-test \
+        upgrade-dev upgrade-prod current-dev current-prod \
         history-dev history-prod stamp-dev-head stamp-prod-head check-dev
 
 help:
@@ -15,6 +16,9 @@ help:
 	@echo "  migrate-test    apply the whole chain to a throwaway empty Postgres"
 	@echo "                  in Docker (upgrade + round-trip + drift check)."
 	@echo "                  RUN THIS BEFORE PUSHING a migration."
+	@echo "  upgrade-test    apply pending migrations to the persistent TEST DB"
+	@echo "  current-test    show current head on the TEST DB"
+	@echo "  check-test      alembic check against the TEST DB (ORM <-> DB drift)"
 	@echo "  upgrade-dev     apply pending migrations to Supabase dev"
 	@echo "  upgrade-prod    apply pending migrations to Supabase prod"
 	@echo "  current-dev     show current head on dev"
@@ -34,6 +38,15 @@ migrate-test:
 new:
 	@test -n "$(MSG)" || (echo "MSG is required: make new MSG='describe change'"; exit 1)
 	$(ALEMBIC) revision -m "$(MSG)"
+
+upgrade-test:
+	@set -a && source .env.test && set +a && $(ALEMBIC) upgrade head
+
+current-test:
+	@set -a && source .env.test && set +a && $(ALEMBIC) current
+
+check-test:
+	@set -a && source .env.test && set +a && $(ALEMBIC) check
 
 upgrade-dev:
 	@set -a && source .env.dev && set +a && $(ALEMBIC) upgrade head
