@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.13.0 (2026-07-02)
+
+### Features
+
+- **feedback**: Add feedback_bugreport table for in-app bug reports
+  ([#48](https://github.com/AgriLogy/agri-db/pull/48),
+  [`0d448a7`](https://github.com/AgriLogy/agri-db/commit/0d448a7eb8e7d88cbfca2a2d54f8b91826805322))
+
+Stores farmer-web "Report an issue" submissions: free-text report, optional Cloudinary
+  screen-recording URL, and rich client context (route, browser, OS, viewport, app version). Written
+  by agri-api apps.feedback and surfaced in the admin back-office via the generic /api/admin/db
+  CRUD.
+
+
 ## v0.12.0 (2026-06-28)
 
 ### Features
