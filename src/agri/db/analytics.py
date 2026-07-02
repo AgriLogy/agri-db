@@ -235,7 +235,10 @@ class AnalyticsAlert(AgriBase):
     __table_args__ = (
         ForeignKeyConstraint(['user_id'], ['CustomUser_customuser.id'], deferrable=True, initially='DEFERRED', name='analytics_alert_user_id_dc15c219_fk_CustomUser_customuser_id'),
         ForeignKeyConstraint(['zone_id'], ['analytics_zone.id'], deferrable=True, initially='DEFERRED', name='analytics_alert_zone_id_8b2af397_fk_analytics_zone_id'),
-        ForeignKeyConstraint(['notification_zone_id'], ['analytics_notificationzone.id'], deferrable=True, initially='DEFERRED', name='analytics_alert_notification_zone_id_fk'),
+        # Matches the DB exactly: e2f3a4b5c6d7 created this FK inline
+        # (auto-named *_fkey) with ON DELETE SET NULL — declaring it any other
+        # way makes `alembic check` report drift.
+        ForeignKeyConstraint(['notification_zone_id'], ['analytics_notificationzone.id'], ondelete='SET NULL', deferrable=True, initially='DEFERRED', name='analytics_alert_notification_zone_id_fkey'),
         PrimaryKeyConstraint('id', name='analytics_alert_pkey'),
         Index('analytics_alert_user_id_dc15c219', 'user_id'),
         Index('analytics_alert_zone_id_8b2af397', 'zone_id'),
