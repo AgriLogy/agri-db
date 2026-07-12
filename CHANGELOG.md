@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.15.0 (2026-07-12)
+
+### Features
+
+- **schema**: Add device_id to sensor-reading tables (device-keyed ownership)
+  ([#59](https://github.com/AgriLogy/agri-db/pull/59),
+  [`539d256`](https://github.com/AgriLogy/agri-db/commit/539d2569687742bbc8f10eb6d0045a5ca83d9bf1))
+
+Phase 0 of device-keyed reading ownership: a nullable device_id soft-FK (-> analytics_device.id, no
+  DB constraint, indexed) on all 37 reading tables, via a HasDeviceId mixin + one additive
+  migration. Nothing reads or writes it yet, so this is safe standalone and reversible. Ownership of
+  a device-sourced reading will later resolve by JOIN to analytics_device, making a device transfer
+  a one-row update with no reading rewrite.
+
+Closes #58
+
+
 ## v0.14.1 (2026-07-02)
 
 ### Bug Fixes
