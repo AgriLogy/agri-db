@@ -39,7 +39,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from agri.db.base import AgriBase
+from agri.db.base import AgriBase, HasDeviceId
 
 if TYPE_CHECKING:
     # Forward-ref target for the user-side relationships/annotations below.
@@ -737,7 +737,7 @@ class AnalyticsDevicesensor(AgriBase):
     zone: Mapped[Optional["AnalyticsZone"]] = relationship("AnalyticsZone")
 
 
-class AnalyticsEcsalinitysensor(AgriBase):
+class AnalyticsEcsalinitysensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_ecsalinitysensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -784,7 +784,7 @@ class AnalyticsEcsalinitysensor(AgriBase):
     )
 
 
-class AnalyticsEcsoilhigh(AgriBase):
+class AnalyticsEcsoilhigh(AgriBase, HasDeviceId):
     __tablename__ = "analytics_ecsoilhigh"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -831,7 +831,7 @@ class AnalyticsEcsoilhigh(AgriBase):
     )
 
 
-class AnalyticsEcsoillow(AgriBase):
+class AnalyticsEcsoillow(AgriBase, HasDeviceId):
     __tablename__ = "analytics_ecsoillow"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -878,7 +878,7 @@ class AnalyticsEcsoillow(AgriBase):
     )
 
 
-class AnalyticsEcsoilmedium(AgriBase):
+class AnalyticsEcsoilmedium(AgriBase, HasDeviceId):
     __tablename__ = "analytics_ecsoilmedium"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -925,7 +925,7 @@ class AnalyticsEcsoilmedium(AgriBase):
     )
 
 
-class AnalyticsElectricityconsumptionsensor(AgriBase):
+class AnalyticsElectricityconsumptionsensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_electricityconsumptionsensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -972,7 +972,7 @@ class AnalyticsElectricityconsumptionsensor(AgriBase):
     )
 
 
-class AnalyticsEt0calculated(AgriBase):
+class AnalyticsEt0calculated(AgriBase, HasDeviceId):
     __tablename__ = "analytics_et0calculated"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1019,7 +1019,7 @@ class AnalyticsEt0calculated(AgriBase):
     )
 
 
-class AnalyticsEt0weather(AgriBase):
+class AnalyticsEt0weather(AgriBase, HasDeviceId):
     __tablename__ = "analytics_et0weather"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1066,7 +1066,7 @@ class AnalyticsEt0weather(AgriBase):
     )
 
 
-class AnalyticsFruitsizesensor(AgriBase):
+class AnalyticsFruitsizesensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_fruitsizesensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1177,7 +1177,7 @@ class AnalyticsGraphname(AgriBase):
     )
 
 
-class AnalyticsHumidityweather(AgriBase):
+class AnalyticsHumidityweather(AgriBase, HasDeviceId):
     __tablename__ = "analytics_humidityweather"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1275,7 +1275,7 @@ class AnalyticsKc(AgriBase):
     )
 
 
-class AnalyticsLargefruitdiametersensor(AgriBase):
+class AnalyticsLargefruitdiametersensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_largefruitdiametersensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1322,7 +1322,7 @@ class AnalyticsLargefruitdiametersensor(AgriBase):
     )
 
 
-class AnalyticsLeafmoisturesensor(AgriBase):
+class AnalyticsLeafmoisturesensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_leafmoisturesensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1369,7 +1369,7 @@ class AnalyticsLeafmoisturesensor(AgriBase):
     )
 
 
-class AnalyticsLeaftemperaturesensor(AgriBase):
+class AnalyticsLeaftemperaturesensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_leaftemperaturesensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1416,7 +1416,7 @@ class AnalyticsLeaftemperaturesensor(AgriBase):
     )
 
 
-class AnalyticsMultidepthsoilmoisturesensor(AgriBase):
+class AnalyticsMultidepthsoilmoisturesensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_multidepthsoilmoisturesensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1463,7 +1463,7 @@ class AnalyticsMultidepthsoilmoisturesensor(AgriBase):
     )
 
 
-class AnalyticsNpksensor(AgriBase):
+class AnalyticsNpksensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_npksensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1518,7 +1518,7 @@ class AnalyticsNpksensor(AgriBase):
     )
 
 
-class AnalyticsPhsoil(AgriBase):
+class AnalyticsPhsoil(AgriBase, HasDeviceId):
     __tablename__ = "analytics_phsoil"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1565,7 +1565,7 @@ class AnalyticsPhsoil(AgriBase):
     )
 
 
-class AnalyticsPhwatersensor(AgriBase):
+class AnalyticsPhwatersensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_phwatersensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1612,7 +1612,7 @@ class AnalyticsPhwatersensor(AgriBase):
     )
 
 
-class AnalyticsPrecipitationrate(AgriBase):
+class AnalyticsPrecipitationrate(AgriBase, HasDeviceId):
     __tablename__ = "analytics_precipitationrate"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1661,7 +1661,7 @@ class AnalyticsPrecipitationrate(AgriBase):
     )
 
 
-class AnalyticsPressureweather(AgriBase):
+class AnalyticsPressureweather(AgriBase, HasDeviceId):
     __tablename__ = "analytics_pressureweather"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1890,7 +1890,7 @@ class AnalyticsSensorlocation(AgriBase):
     )
 
 
-class AnalyticsSoilconductivitysensor(AgriBase):
+class AnalyticsSoilconductivitysensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soilconductivitysensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1937,7 +1937,7 @@ class AnalyticsSoilconductivitysensor(AgriBase):
     )
 
 
-class AnalyticsSoilmoisturehigh(AgriBase):
+class AnalyticsSoilmoisturehigh(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soilmoisturehigh"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -1984,7 +1984,7 @@ class AnalyticsSoilmoisturehigh(AgriBase):
     )
 
 
-class AnalyticsSoilmoisturelow(AgriBase):
+class AnalyticsSoilmoisturelow(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soilmoisturelow"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2031,7 +2031,7 @@ class AnalyticsSoilmoisturelow(AgriBase):
     )
 
 
-class AnalyticsSoilmoisturemedium(AgriBase):
+class AnalyticsSoilmoisturemedium(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soilmoisturemedium"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2078,7 +2078,7 @@ class AnalyticsSoilmoisturemedium(AgriBase):
     )
 
 
-class AnalyticsSoilsalinitysensor(AgriBase):
+class AnalyticsSoilsalinitysensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soilsalinitysensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2125,7 +2125,7 @@ class AnalyticsSoilsalinitysensor(AgriBase):
     )
 
 
-class AnalyticsSoiltemperaturehigh(AgriBase):
+class AnalyticsSoiltemperaturehigh(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soiltemperaturehigh"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2172,7 +2172,7 @@ class AnalyticsSoiltemperaturehigh(AgriBase):
     )
 
 
-class AnalyticsSoiltemperaturelow(AgriBase):
+class AnalyticsSoiltemperaturelow(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soiltemperaturelow"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2219,7 +2219,7 @@ class AnalyticsSoiltemperaturelow(AgriBase):
     )
 
 
-class AnalyticsSoiltemperaturemedium(AgriBase):
+class AnalyticsSoiltemperaturemedium(AgriBase, HasDeviceId):
     __tablename__ = "analytics_soiltemperaturemedium"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2266,7 +2266,7 @@ class AnalyticsSoiltemperaturemedium(AgriBase):
     )
 
 
-class AnalyticsSolarradiation(AgriBase):
+class AnalyticsSolarradiation(AgriBase, HasDeviceId):
     __tablename__ = "analytics_solarradiation"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2313,7 +2313,7 @@ class AnalyticsSolarradiation(AgriBase):
     )
 
 
-class AnalyticsTemperatureweather(AgriBase):
+class AnalyticsTemperatureweather(AgriBase, HasDeviceId):
     __tablename__ = "analytics_temperatureweather"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2360,7 +2360,7 @@ class AnalyticsTemperatureweather(AgriBase):
     )
 
 
-class AnalyticsVpdweather(AgriBase):
+class AnalyticsVpdweather(AgriBase, HasDeviceId):
     __tablename__ = "analytics_vpdweather"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2407,7 +2407,7 @@ class AnalyticsVpdweather(AgriBase):
     )
 
 
-class AnalyticsWaterecsensor(AgriBase):
+class AnalyticsWaterecsensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_waterecsensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2454,7 +2454,7 @@ class AnalyticsWaterecsensor(AgriBase):
     )
 
 
-class AnalyticsWaterflowsensor(AgriBase):
+class AnalyticsWaterflowsensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_waterflowsensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2501,7 +2501,7 @@ class AnalyticsWaterflowsensor(AgriBase):
     )
 
 
-class AnalyticsWaterlevelsensor(AgriBase):
+class AnalyticsWaterlevelsensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_waterlevelsensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2548,7 +2548,7 @@ class AnalyticsWaterlevelsensor(AgriBase):
     )
 
 
-class AnalyticsWaterpressuresensor(AgriBase):
+class AnalyticsWaterpressuresensor(AgriBase, HasDeviceId):
     __tablename__ = "analytics_waterpressuresensor"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2595,7 +2595,7 @@ class AnalyticsWaterpressuresensor(AgriBase):
     )
 
 
-class AnalyticsWinddirection(AgriBase):
+class AnalyticsWinddirection(AgriBase, HasDeviceId):
     __tablename__ = "analytics_winddirection"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2642,7 +2642,7 @@ class AnalyticsWinddirection(AgriBase):
     )
 
 
-class AnalyticsWindspeed(AgriBase):
+class AnalyticsWindspeed(AgriBase, HasDeviceId):
     __tablename__ = "analytics_windspeed"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -2734,7 +2734,7 @@ class AnalyticsKcperiodassignment(AgriBase):
     )
 
 
-class AnalyticsBatterysensor(AgriBase):
+class AnalyticsBatterysensor(AgriBase, HasDeviceId):
     """Device battery voltage (V) — reported by LoRaWAN nodes."""
 
     __tablename__ = "analytics_batterysensor"
@@ -2776,7 +2776,7 @@ class AnalyticsBatterysensor(AgriBase):
     value: Mapped[Optional[float]] = mapped_column(Double(53))
 
 
-class AnalyticsSignalsensor(AgriBase):
+class AnalyticsSignalsensor(AgriBase, HasDeviceId):
     """Device radio signal strength, RSSI (dBm) — LoRaWAN nodes + Bivocom gateways."""
 
     __tablename__ = "analytics_signalsensor"
