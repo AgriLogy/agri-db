@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.16.0 (2026-07-16)
+
+### Features
+
+- **devices**: Store GPS coordinates on analytics_device
+  ([#62](https://github.com/AgriLogy/agri-db/pull/62),
+  [`f4eeea9`](https://github.com/AgriLogy/agri-db/commit/f4eeea9f3c7ec0b1224ce565cc365945757b49b3))
+
+Add nullable latitude / longitude (WGS-84 decimal degrees, DOUBLE PRECISION) to analytics_device +
+  the Alembic migration, so devices can carry a real position for the farmer map to plot each sensor
+  at its location (MAP-1). NULL until captured at onboarding / set from the admin device list.
+
+Verified with make migrate-test: the full chain applies cleanly on an empty Postgres and alembic
+  check reports no ORM<->DB drift.
+
+Closes #61
+
+
 ## v0.15.0 (2026-07-12)
 
 ### Features
