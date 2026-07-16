@@ -17,6 +17,7 @@ from sqlalchemy import (
     BigInteger,
     Boolean,
     DateTime,
+    Float,
     Identity,
     PrimaryKeyConstraint,
     String,
@@ -63,3 +64,8 @@ class AnalyticsDevice(AgriBase):
         DateTime(True)
     )
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    # GPS position of the physical device, so the map can plot each sensor at
+    # its real location (WGS-84 decimal degrees). NULL until captured at
+    # onboarding / set from the admin device list.
+    latitude: Mapped[Optional[float]] = mapped_column(Float)
+    longitude: Mapped[Optional[float]] = mapped_column(Float)
