@@ -249,6 +249,48 @@ class AnalyticsUsersensorunitpreference(AgriBase):
     )
 
 
+class AnalyticsSector(AgriBase):
+    """Organizational grouping of zones under a user's farm: User → Sector →
+    Zone. Purely a named bucket (no geometry) — zones reference it via
+    ``analytics_zone.sector_id`` (nullable = unassigned). Deleting a sector
+    only unassigns its zones (ON DELETE SET NULL), never deletes them."""
+
+    __tablename__ = "analytics_sector"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["user_id"],
+            ["CustomUser_customuser.id"],
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_sector_user_id_fk_CustomUser_customuser_id",
+        ),
+        PrimaryKeyConstraint("id", name="analytics_sector_pkey"),
+        Index("analytics_sector_user_id", "user_id"),
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+        primary_key=True,
+    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+
+    user: Mapped["CustomUserCustomuser"] = relationship(
+        "CustomUserCustomuser", back_populates="analytics_sector"
+    )
+    zones: Mapped[list["AnalyticsZone"]] = relationship(
+        "AnalyticsZone", back_populates="sector"
+    )
+
+
 class AnalyticsZone(AgriBase):
     __tablename__ = "analytics_zone"
     __table_args__ = (
@@ -259,8 +301,17 @@ class AnalyticsZone(AgriBase):
             initially="DEFERRED",
             name="analytics_zone_user_id_b7a7ebd7_fk_CustomUser_customuser_id",
         ),
+        ForeignKeyConstraint(
+            ["sector_id"],
+            ["analytics_sector.id"],
+            deferrable=True,
+            initially="DEFERRED",
+            ondelete="SET NULL",
+            name="analytics_zone_sector_id_fk_analytics_sector_id",
+        ),
         PrimaryKeyConstraint("id", name="analytics_zone_pkey"),
         Index("analytics_zone_user_id_b7a7ebd7", "user_id"),
+        Index("analytics_zone_sector_id", "sector_id"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -290,9 +341,15 @@ class AnalyticsZone(AgriBase):
     elevation_m: Mapped[float] = mapped_column(
         Double(53), nullable=False, server_default=text("0")
     )
+    # User → Sector → Zone grouping. Nullable: a zone with no sector is
+    # "unassigned" (backfill leaves every existing zone here).
+    sector_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
 
     user: Mapped["CustomUserCustomuser"] = relationship(
         "CustomUserCustomuser", back_populates="analytics_zone"
+    )
+    sector: Mapped[Optional["AnalyticsSector"]] = relationship(
+        "AnalyticsSector", back_populates="zones"
     )
     analytics_activegraph: Mapped[list["AnalyticsActivegraph"]] = relationship(
         "AnalyticsActivegraph", back_populates="zone"
