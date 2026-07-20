@@ -88,6 +88,7 @@ if TYPE_CHECKING:
         AnalyticsWaterpressuresensor,
         AnalyticsWinddirection,
         AnalyticsWindspeed,
+        AnalyticsSector,
         AnalyticsZone,
     )
 
@@ -365,6 +366,9 @@ class CustomUserCustomuser(AgriBase):
     )
     analytics_zone: Mapped[list["AnalyticsZone"]] = relationship(
         "AnalyticsZone", back_populates="user"
+    )
+    analytics_sector: Mapped[list["AnalyticsSector"]] = relationship(
+        "AnalyticsSector", back_populates="user"
     )
     # ManagerAffirmation has two FKs to the user, so each reverse side names
     # the foreign key it pairs with.
