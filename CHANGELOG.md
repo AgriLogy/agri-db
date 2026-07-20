@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v0.17.0 (2026-07-20)
+
+### Features
+
+- **schema**: Add sector hierarchy (User -> Sector -> Zone)
+  ([#64](https://github.com/AgriLogy/agri-db/pull/64),
+  [`f331454`](https://github.com/AgriLogy/agri-db/commit/f331454eae216713f97ed982465e19bf441a6f94))
+
+Closes #63
+
+
 ## v0.16.0 (2026-07-16)
 
 ### Features
