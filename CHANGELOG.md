@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.19.0 (2026-07-23)
+
+### Features
+
+- **schema**: Add access_level (admin/editor/monitor) to users
+  ([#72](https://github.com/AgriLogy/agri-db/pull/72),
+  [`e3844d1`](https://github.com/AgriLogy/agri-db/commit/e3844d1b828054b074b5ad08a936866e4a82af0b))
+
+
 ## v0.18.0 (2026-07-23)
 
 ### Documentation
