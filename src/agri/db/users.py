@@ -182,6 +182,16 @@ class CustomUserCustomuser(AgriBase):
     # droplet by agri-api's ensure_technician_tables.py; absorbed into Alembic.
     # Like Django, the default (False) lives in the app layer, not the DB.
     is_technician: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    # RBAC role tier (agri-db #71). One of 'admin' | 'editor' | 'monitor':
+    #   monitor = read-only; editor = create/edit (+ monitor); admin = user
+    #   management + delete (+ editor). Like Django's choice fields and the
+    #   preferred_language column above, the allowed set is validated in the
+    #   app layer (a plain VARCHAR here), not a DB CHECK/enum — matching the
+    #   house style for constrained string columns. Default 'editor' preserves
+    #   the edit rights every existing account already has.
+    access_level: Mapped[str] = mapped_column(
+        String(16), nullable=False, server_default=text("'editor'")
+    )
     notify_every: Mapped[int] = mapped_column(
         SmallInteger, nullable=False, server_default=text("240")
     )
