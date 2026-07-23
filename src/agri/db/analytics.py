@@ -646,6 +646,122 @@ class AnalyticsAlert(AgriBase):
     )
 
 
+class AnalyticsAlertevent(AgriBase):
+    """One row per alert *firing* — the history behind the alert report (RPT-1).
+
+    ``analytics_alert`` holds the rule and only ever keeps the LAST trigger
+    (``last_triggered_at`` / ``last_emailed_at``), so nothing today can answer
+    "what fired in this zone last month". This table is that append-only log:
+    the evaluation that ``agri.core.alerts.evaluate_alert`` found true, with the
+    observed reading and the threshold it violated captured at the moment of the
+    firing.
+
+    Denormalised on purpose: ``alert_name`` / ``condition`` / ``threshold_value``
+    / ``unit`` are snapshots, so the report still reads correctly after the rule
+    is edited or deleted (``alert_id`` is ON DELETE SET NULL). Reports slice by
+    date range and by zone — see the composite indexes below.
+    """
+
+    __tablename__ = "analytics_alertevent"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["alert_id"],
+            ["analytics_alert.id"],
+            ondelete="SET NULL",
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_alertevent_alert_id_fkey",
+        ),
+        ForeignKeyConstraint(
+            ["user_id"],
+            ["CustomUser_customuser.id"],
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_alertevent_user_id_fkey",
+        ),
+        ForeignKeyConstraint(
+            ["zone_id"],
+            ["analytics_zone.id"],
+            ondelete="SET NULL",
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_alertevent_zone_id_fkey",
+        ),
+        ForeignKeyConstraint(
+            ["notification_zone_id"],
+            ["analytics_notificationzone.id"],
+            ondelete="SET NULL",
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_alertevent_notification_zone_id_fkey",
+        ),
+        PrimaryKeyConstraint("id", name="analytics_alertevent_pkey"),
+        # Report query shape: "date range + zone", "date range + user".
+        Index("analytics_alertevent_zone_triggered_idx", "zone_id", "triggered_at"),
+        Index("analytics_alertevent_user_triggered_idx", "user_id", "triggered_at"),
+        Index("analytics_alertevent_triggered_at_idx", "triggered_at"),
+        Index("analytics_alertevent_alert_id_idx", "alert_id"),
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+        primary_key=True,
+    )
+    # When the condition was found true. THE report axis (not created_at).
+    triggered_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(True), nullable=False, server_default=text("now()")
+    )
+    # The rule that fired. Nullable + ON DELETE SET NULL so deleting an alert
+    # never erases its history.
+    alert_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    # Owner — every report is scoped to one account.
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    # Farm zone the reading came from. NULL when the alert is user-wide, i.e.
+    # ``agri.core.alerts.effective_zone_id_for_alert`` resolved to None.
+    zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    # Set when the alert is bound to a custom notification zone instead of a
+    # farm zone (agrilogy-front #57).
+    notification_zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    # Soft FK to analytics_device (Django-managed; same convention as
+    # ``HasDeviceId`` on the reading tables) — which physical device/sensor
+    # produced the offending reading. NULL for weather / user-wide readings.
+    device_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    # Reading stream, e.g. "soilmoisturemedium" (agri.core SENSOR_KEY_REGISTRY).
+    sensor_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    # Snapshots of the rule as it was when it fired.
+    alert_name: Mapped[str] = mapped_column(
+        String(200), nullable=False, server_default=text("''")
+    )
+    condition: Mapped[str] = mapped_column(String(1), nullable=False)  # > | < | =
+    threshold_value: Mapped[float] = mapped_column(Double(53), nullable=False)
+    # The reading that violated the threshold, and when it was recorded
+    # (``reading_at`` differs from ``triggered_at``: evaluation is periodic).
+    observed_value: Mapped[float] = mapped_column(Double(53), nullable=False)
+    reading_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    # Unit label snapshot (registry lookup) so the report needs no join.
+    unit: Mapped[str] = mapped_column(
+        String(32), nullable=False, server_default=text("''")
+    )
+    # Comma-separated channels actually notified, e.g. "email,whatsapp".
+    # Empty when the firing was recorded but no notification went out.
+    notified_channels: Mapped[str] = mapped_column(
+        String(64), nullable=False, server_default=text("''")
+    )
+    # Free-form extra context for the report (sensor label, sector, raw payload).
+    context: Mapped[Optional[dict]] = mapped_column(JSONB)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(True), nullable=False, server_default=text("now()")
+    )
+
+
 class AnalyticsNotificationzone(AgriBase):
     """User-owned alert grouping independent of the farm ``analytics_zone`` rows
     (agrilogy-front #57). Sensors are attached via ``AnalyticsNotificationzonesensor``;
