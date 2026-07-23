@@ -2989,3 +2989,207 @@ class AnalyticsSignalsensor(AgriBase, HasDeviceId):
     user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     zone_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     value: Mapped[Optional[float]] = mapped_column(Double(53))
+
+
+class AnalyticsSensorgroup(AgriBase):
+    """A farmer-defined bundle of sensor streams, owned by the user account
+    (which *is* the farm — one farm per account). Replaces the browser-local
+    grouping of agri-web #64: groups now live server-side, so they survive a
+    device change and are shared across every client of the same account.
+    A group may span zones (and therefore sectors) within the farm; members are
+    attached via ``AnalyticsSensorgroupsensor``. Deleting a group cascades to
+    its membership rows only — devices and readings are never touched."""
+
+    __tablename__ = "analytics_sensorgroup"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["user_id"],
+            ["CustomUser_customuser.id"],
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_sensorgroup_user_id_fk",
+        ),
+        PrimaryKeyConstraint("id", name="analytics_sensorgroup_pkey"),
+        UniqueConstraint(
+            "user_id", "name", name="analytics_sensorgroup_user_name_uniq"
+        ),
+        Index("analytics_sensorgroup_user_id_idx", "user_id"),
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+        primary_key=True,
+    )
+    # Farmer-visible group label; unique per owner (see the unique constraint).
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    # Optional free-text note shown in the group manager.
+    description: Mapped[str] = mapped_column(
+        Text, nullable=False, server_default=text("''")
+    )
+    # Owner = the farm. Hard FK: CustomUser_customuser IS mirrored here.
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    # Manual ordering of the groups in the UI (ties broken by name/id).
+    display_order: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    # Hide a group without deleting it (keeps its membership rows).
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+
+    sensors: Mapped[list["AnalyticsSensorgroupsensor"]] = relationship(
+        "AnalyticsSensorgroupsensor", back_populates="group"
+    )
+
+
+class AnalyticsSensorgroupsensor(AgriBase):
+    """One sensor stream inside a sensor group.
+
+    A sensor stream is identified the way the whole platform identifies one
+    since the device-keyed ownership refactor: the pair
+    ``(device_id, sensor_key)`` — ``device_id`` being the soft FK to
+    ``analytics_device`` carried by every reading row (see
+    ``agri.db.base.HasDeviceId``) and ``sensor_key`` the canonical vocabulary
+    from ``agri.core.alerts.SENSOR_KEY_REGISTRY`` that selects the reading
+    table. ``device_id`` is therefore a SOFT FK (no DB constraint), matching
+    both the readings and ``analytics_devicesensor``.
+
+    The same stream MAY belong to several groups (groups are overlapping
+    views, e.g. "Verger nord" and "Tous les tensiomètres"), so uniqueness is
+    scoped to the group: a stream cannot be added twice to the SAME group."""
+
+    __tablename__ = "analytics_sensorgroupsensor"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["group_id"],
+            ["analytics_sensorgroup.id"],
+            ondelete="CASCADE",
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_sensorgroupsensor_group_id_fk",
+        ),
+        ForeignKeyConstraint(
+            ["zone_id"],
+            ["analytics_zone.id"],
+            ondelete="SET NULL",
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_sensorgroupsensor_zone_id_fk",
+        ),
+        PrimaryKeyConstraint("id", name="analytics_sensorgroupsensor_pkey"),
+        UniqueConstraint(
+            "group_id",
+            "device_id",
+            "sensor_key",
+            name="analytics_sensorgroupsensor_group_sensor_uniq",
+        ),
+        Index("analytics_sensorgroupsensor_group_idx", "group_id"),
+        Index(
+            "analytics_sensorgroupsensor_sensor_idx",
+            "device_id",
+            "sensor_key",
+        ),
+        Index("analytics_sensorgroupsensor_zone_idx", "zone_id"),
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+        primary_key=True,
+    )
+    # Parent group; CASCADE so dropping a group drops only its membership rows.
+    group_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    # Soft FK to analytics_device (Django-managed, not mirrored here).
+    device_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    # Canonical sensor vocabulary (agri.core SENSOR_KEY_REGISTRY key).
+    sensor_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    # Optional per-group display name overriding the registry label.
+    label: Mapped[Optional[str]] = mapped_column(String(200))
+    # Zone the stream is read from at add time — denormalized for display/
+    # filtering only; ownership still resolves through analytics_device.
+    zone_id: Mapped[Optional[int]] = mapped_column(BigInteger)
+    # Manual ordering of sensors within the group.
+    display_order: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("0")
+    )
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+
+    group: Mapped["AnalyticsSensorgroup"] = relationship(
+        "AnalyticsSensorgroup", back_populates="sensors"
+    )
+    zone: Mapped[Optional["AnalyticsZone"]] = relationship("AnalyticsZone")
+
+
+class AnalyticsSensorcalibration(AgriBase):
+    """Affine calibration of one sensor stream: ``real = raw * scale_a + offset_b``
+    (agri-web #67). Keyed by the same ``(device_id, sensor_key)`` pair as
+    ``AnalyticsSensorgroupsensor`` so both features address a sensor identically.
+    STORAGE ONLY — applying the transform (and any unit conversion) lands later
+    in agri-core; nothing here rewrites stored readings."""
+
+    __tablename__ = "analytics_sensorcalibration"
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="analytics_sensorcalibration_pkey"),
+        # Exactly one calibration row per sensor stream.
+        UniqueConstraint(
+            "device_id",
+            "sensor_key",
+            name="analytics_sensorcalibration_sensor_uniq",
+        ),
+        Index("analytics_sensorcalibration_device_idx", "device_id"),
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+        primary_key=True,
+    )
+    # Soft FK to analytics_device (Django-managed, not mirrored here).
+    device_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    # Canonical sensor vocabulary (agri.core SENSOR_KEY_REGISTRY key).
+    sensor_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    # Multiplicative term `a`; 1.0 = identity (no scaling).
+    scale_a: Mapped[float] = mapped_column(
+        Double(53), nullable=False, server_default=text("1.0")
+    )
+    # Additive term `b`, expressed in the target unit; 0.0 = no offset.
+    offset_b: Mapped[float] = mapped_column(
+        Double(53), nullable=False, server_default=text("0.0")
+    )
+    # Unit the corrected value is expressed in (free text, e.g. '°C', 'kPa').
+    # Empty = keep the SENSOR_KEY_REGISTRY default unit for this sensor_key.
+    unit: Mapped[str] = mapped_column(
+        String(32), nullable=False, server_default=text("''")
+    )
+    # Turn the correction off without losing the coefficients.
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    # Optional note: who calibrated, against which reference instrument.
+    note: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("''"))
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
