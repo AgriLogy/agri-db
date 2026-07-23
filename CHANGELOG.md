@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.18.0 (2026-07-23)
+
+### Documentation
+
+- Add CONTRIBUTING.md ([#66](https://github.com/AgriLogy/agri-db/pull/66),
+  [`2abb34f`](https://github.com/AgriLogy/agri-db/commit/2abb34fcf4402978fda7295250f6f7ca8fce96b7))
+
+### Features
+
+- **schema**: Add alert-event and irrigation-decision history tables
+  ([#68](https://github.com/AgriLogy/agri-db/pull/68),
+  [`84bb661`](https://github.com/AgriLogy/agri-db/commit/84bb6616b58426b6dcf836f6ecc90d1375f836d4))
+
+- **schema**: Add sensor groups and per-sensor calibration
+  ([#70](https://github.com/AgriLogy/agri-db/pull/70),
+  [`0135bb3`](https://github.com/AgriLogy/agri-db/commit/0135bb3bb8a4cf54049ed19c25b9c1ce4b85e5dd))
+
+
 ## v0.17.0 (2026-07-20)
 
 ### Features
