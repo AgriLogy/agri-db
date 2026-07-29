@@ -1,6 +1,45 @@
 # CHANGELOG
 
 
+## v0.19.1 (2026-07-29)
+
+### Performance Improvements
+
+- **sensors**: Index (user_id, timestamp) on all 37 reading tables
+  ([#74](https://github.com/AgriLogy/agri-db/pull/74),
+  [`f400bab`](https://github.com/AgriLogy/agri-db/commit/f400babe43212e44f2559d79a214c66d5effe3da))
+
+Every analytics chart asks one question -- this user's readings between two timestamps, averaged per
+  hour -- but the reading tables were indexed only on user_id, zone_id and device_id. With no
+  timestamp index Postgres narrowed by user and then threw most of the rows away.
+
+Measured on prod (analytics_soiltemperaturelow, 7-day range):
+
+Bitmap Heap Scan (actual time=32.267..35.785 rows=3249) Filter: ("timestamp" >= (now() - '7
+  days'::interval)) Rows Removed by Filter: 50791
+
+94% of the work discarded, and the discarded term grows with every uplink while the useful result
+  stays the same size -- so chart latency degraded in proportion to how long the devices had been
+  running. One analytics page fans out 12-18 of these concurrently against 3 gunicorn workers on a 1
+  vCPU host.
+
+Verified on a 120k-row reproduction:
+
+before: Seq Scan, 110172 rows removed, 1003 buffers, 13.26 ms after: Bitmap Index Scan, 0 rows
+  removed, 131 buffers, 2.51 ms
+
+Key order is (user_id, timestamp) -- equality then range, the order a btree can use for both.
+  zone_id is deliberately excluded: the API's zone filter is optional, and putting it second would
+  strand the timestamp range whenever a caller omits it.
+
+Built CONCURRENTLY inside an autocommit block: ingest writes to these tables every few seconds and a
+  plain CREATE INDEX would block it for the whole build. ANALYZE is issued per table because the
+  same prod plan estimated rows=2 against rows=3249 actual, so statistics were stale enough to
+  distort plan choice.
+
+Applied and rolled back against the full schema: 37 indexes created, 37 dropped, no drift.
+
+
 ## v0.19.0 (2026-07-23)
 
 ### Features
