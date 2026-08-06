@@ -251,9 +251,15 @@ class AnalyticsUsersensorunitpreference(AgriBase):
 
 class AnalyticsSector(AgriBase):
     """Organizational grouping of zones under a user's farm: User → Sector →
-    Zone. Purely a named bucket (no geometry) — zones reference it via
-    ``analytics_zone.sector_id`` (nullable = unassigned). Deleting a sector
-    only unassigns its zones (ON DELETE SET NULL), never deletes them."""
+    Zone. Zones reference it via ``analytics_zone.sector_id`` (nullable =
+    unassigned). Deleting a sector only unassigns its zones (ON DELETE SET
+    NULL), never deletes them.
+
+    Optionally carries the sector's drawn shape (``geometry``, GeoJSON in
+    JSONB) with its derived ``area_ha`` / ``perimeter_m`` and map ``color``.
+    All are nullable: a name-only sector that has never been drawn predates
+    the map and stays valid. ``area_ha`` / ``perimeter_m`` are written by the
+    API from ``geometry`` and are never client-supplied."""
 
     __tablename__ = "analytics_sector"
     __table_args__ = (
@@ -266,6 +272,11 @@ class AnalyticsSector(AgriBase):
         ),
         PrimaryKeyConstraint("id", name="analytics_sector_pkey"),
         Index("analytics_sector_user_id", "user_id"),
+        Index(
+            "analytics_sector_user_id_drawn",
+            "user_id",
+            postgresql_where=text("geometry IS NOT NULL"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -282,6 +293,13 @@ class AnalyticsSector(AgriBase):
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    geometry: Mapped[Optional[dict]] = mapped_column(JSONB)
+    area_ha: Mapped[Optional[float]] = mapped_column(Double(53))
+    perimeter_m: Mapped[Optional[float]] = mapped_column(Double(53))
+    color: Mapped[Optional[str]] = mapped_column(String(9))
+    geometry_updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(
+        DateTime(True)
+    )
 
     user: Mapped["CustomUserCustomuser"] = relationship(
         "CustomUserCustomuser", back_populates="analytics_sector"
