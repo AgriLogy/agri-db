@@ -1,6 +1,27 @@
 # CHANGELOG
 
 
+## v0.20.0 (2026-08-06)
+
+### Features
+
+- **sector**: Store sector geometry, area, perimeter and colour
+  ([#75](https://github.com/AgriLogy/agri-db/pull/75),
+  [`fb5e4ae`](https://github.com/AgriLogy/agri-db/commit/fb5e4aee1e5a13714fd38becf1fbda9c6ac1305d))
+
+Adds geometry (JSONB GeoJSON), area_ha, perimeter_m, color and geometry_updated_at to
+  analytics_sector, plus a partial index on drawn sectors.
+
+Sector polygons lived in agri-web's localStorage, so a farm's sectors were per-device and
+  per-browser and were destroyed by clearing the cache. This makes the shape server-owned.
+
+JSONB rather than PostGIS: the extension is not enabled on either Supabase project, and enabling it
+  deserves its own decision. A later migration can add a geography column and backfill from this
+  JSONB without the API contract changing.
+
+All columns nullable, DDL idempotent.
+
+
 ## v0.19.1 (2026-07-29)
 
 ### Performance Improvements
