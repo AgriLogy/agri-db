@@ -948,6 +948,9 @@ class AnalyticsEcsalinitysensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_ecsalinitysensor_pkey"),
         Index("analytics_ecsalinitysensor_user_id_7863f084", "user_id"),
         Index("analytics_ecsalinitysensor_zone_id_bc5b3e88", "zone_id"),
+        Index(
+            "ix_analytics_ecsalinitysensor_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -995,6 +998,7 @@ class AnalyticsEcsoilhigh(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soilechigh_pkey"),
         Index("analytics_soilechigh_user_id_ba0aeab8", "user_id"),
         Index("analytics_soilechigh_zone_id_9b3051a1", "zone_id"),
+        Index("ix_analytics_ecsoilhigh_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1042,6 +1046,7 @@ class AnalyticsEcsoillow(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_ecsoillow_pkey"),
         Index("analytics_ecsoillow_user_id_f1f8b9b1", "user_id"),
         Index("analytics_ecsoillow_zone_id_6435968a", "zone_id"),
+        Index("ix_analytics_ecsoillow_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1089,6 +1094,7 @@ class AnalyticsEcsoilmedium(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_ecsoilmedium_pkey"),
         Index("analytics_ecsoilmedium_user_id_af4e0840", "user_id"),
         Index("analytics_ecsoilmedium_zone_id_26b984b6", "zone_id"),
+        Index("ix_analytics_ecsoilmedium_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1136,6 +1142,11 @@ class AnalyticsElectricityconsumptionsensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_electricityconsumptionsensor_pkey"),
         Index("analytics_electricityconsumptionsensor_user_id_03f25332", "user_id"),
         Index("analytics_electricityconsumptionsensor_zone_id_a532e0be", "zone_id"),
+        Index(
+            "ix_analytics_electricityconsumptionsensor_user_id_timestamp",
+            "user_id",
+            "timestamp",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1183,6 +1194,7 @@ class AnalyticsEt0calculated(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_et0calculated_pkey"),
         Index("analytics_et0calculated_user_id_99546ca9", "user_id"),
         Index("analytics_et0calculated_zone_id_620e335a", "zone_id"),
+        Index("ix_analytics_et0calculated_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1230,6 +1242,7 @@ class AnalyticsEt0weather(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_et0weather_pkey"),
         Index("analytics_et0weather_user_id_f6f47f3f", "user_id"),
         Index("analytics_et0weather_zone_id_466ea3ec", "zone_id"),
+        Index("ix_analytics_et0weather_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1277,6 +1290,7 @@ class AnalyticsFruitsizesensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_fruitsizesensor_pkey"),
         Index("analytics_fruitsizesensor_user_id_3baef23e", "user_id"),
         Index("analytics_fruitsizesensor_zone_id_e811413e", "zone_id"),
+        Index("ix_analytics_fruitsizesensor_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1388,6 +1402,7 @@ class AnalyticsHumidityweather(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_humidityweather_pkey"),
         Index("analytics_humidityweather_user_id_27a943ca", "user_id"),
         Index("analytics_humidityweather_zone_id_aeee65d6", "zone_id"),
+        Index("ix_analytics_humidityweather_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1486,6 +1501,11 @@ class AnalyticsLargefruitdiametersensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_largefruitdiametersensor_pkey"),
         Index("analytics_largefruitdiametersensor_user_id_7029b33d", "user_id"),
         Index("analytics_largefruitdiametersensor_zone_id_adf5ba65", "zone_id"),
+        Index(
+            "ix_analytics_largefruitdiametersensor_user_id_timestamp",
+            "user_id",
+            "timestamp",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1533,6 +1553,9 @@ class AnalyticsLeafmoisturesensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_leafmoisturesensor_pkey"),
         Index("analytics_leafmoisturesensor_user_id_46ca9ebd", "user_id"),
         Index("analytics_leafmoisturesensor_zone_id_230676f2", "zone_id"),
+        Index(
+            "ix_analytics_leafmoisturesensor_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1580,6 +1603,11 @@ class AnalyticsLeaftemperaturesensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_leaftemperaturesensor_pkey"),
         Index("analytics_leaftemperaturesensor_user_id_a41024d0", "user_id"),
         Index("analytics_leaftemperaturesensor_zone_id_153f9604", "zone_id"),
+        Index(
+            "ix_analytics_leaftemperaturesensor_user_id_timestamp",
+            "user_id",
+            "timestamp",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1627,6 +1655,11 @@ class AnalyticsMultidepthsoilmoisturesensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_multidepthsoilmoisturesensor_pkey"),
         Index("analytics_multidepthsoilmoisturesensor_user_id_4ca851e7", "user_id"),
         Index("analytics_multidepthsoilmoisturesensor_zone_id_27ad35eb", "zone_id"),
+        Index(
+            "ix_analytics_multidepthsoilmoisturesensor_user_id_timestamp",
+            "user_id",
+            "timestamp",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1674,6 +1707,7 @@ class AnalyticsNpksensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_npksensor_pkey"),
         Index("analytics_npksensor_user_id_6182132e", "user_id"),
         Index("analytics_npksensor_zone_id_75bfe336", "zone_id"),
+        Index("ix_analytics_npksensor_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1729,6 +1763,7 @@ class AnalyticsPhsoil(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_phsoil_pkey"),
         Index("analytics_phsoil_user_id_c386a472", "user_id"),
         Index("analytics_phsoil_zone_id_20c52b80", "zone_id"),
+        Index("ix_analytics_phsoil_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1776,6 +1811,7 @@ class AnalyticsPhwatersensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_phwatersensor_pkey"),
         Index("analytics_phwatersensor_user_id_cd0376cf", "user_id"),
         Index("analytics_phwatersensor_zone_id_9e5c27b9", "zone_id"),
+        Index("ix_analytics_phwatersensor_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1823,6 +1859,9 @@ class AnalyticsPrecipitationrate(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_precipitationrate_pkey"),
         Index("analytics_precipitationrate_user_id_821ca5de", "user_id"),
         Index("analytics_precipitationrate_zone_id_4575eb73", "zone_id"),
+        Index(
+            "ix_analytics_precipitationrate_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -1872,6 +1911,7 @@ class AnalyticsPressureweather(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_pressureweather_pkey"),
         Index("analytics_pressureweather_user_id_5de398f9", "user_id"),
         Index("analytics_pressureweather_zone_id_7509a23b", "zone_id"),
+        Index("ix_analytics_pressureweather_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2101,6 +2141,11 @@ class AnalyticsSoilconductivitysensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soilconductivitysensor_pkey"),
         Index("analytics_soilconductivitysensor_user_id_299beed3", "user_id"),
         Index("analytics_soilconductivitysensor_zone_id_73a107a6", "zone_id"),
+        Index(
+            "ix_analytics_soilconductivitysensor_user_id_timestamp",
+            "user_id",
+            "timestamp",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2148,6 +2193,9 @@ class AnalyticsSoilmoisturehigh(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soilmoisturehigh_pkey"),
         Index("analytics_soilmoisturehigh_user_id_463689ba", "user_id"),
         Index("analytics_soilmoisturehigh_zone_id_ef61097b", "zone_id"),
+        Index(
+            "ix_analytics_soilmoisturehigh_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2195,6 +2243,7 @@ class AnalyticsSoilmoisturelow(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soilmoisturelow_pkey"),
         Index("analytics_soilmoisturelow_user_id_963684b0", "user_id"),
         Index("analytics_soilmoisturelow_zone_id_0fa3c886", "zone_id"),
+        Index("ix_analytics_soilmoisturelow_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2242,6 +2291,9 @@ class AnalyticsSoilmoisturemedium(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soilmoisturemedium_pkey"),
         Index("analytics_soilmoisturemedium_user_id_20dd2643", "user_id"),
         Index("analytics_soilmoisturemedium_zone_id_e5bdf879", "zone_id"),
+        Index(
+            "ix_analytics_soilmoisturemedium_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2289,6 +2341,9 @@ class AnalyticsSoilsalinitysensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soilsalinitysensor_pkey"),
         Index("analytics_soilsalinitysensor_user_id_5f15cdf1", "user_id"),
         Index("analytics_soilsalinitysensor_zone_id_ed078900", "zone_id"),
+        Index(
+            "ix_analytics_soilsalinitysensor_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2336,6 +2391,9 @@ class AnalyticsSoiltemperaturehigh(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soiltemperaturehigh_pkey"),
         Index("analytics_soiltemperaturehigh_user_id_7bceb8cd", "user_id"),
         Index("analytics_soiltemperaturehigh_zone_id_a7604c73", "zone_id"),
+        Index(
+            "ix_analytics_soiltemperaturehigh_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2383,6 +2441,9 @@ class AnalyticsSoiltemperaturelow(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soiltemperaturelow_pkey"),
         Index("analytics_soiltemperaturelow_user_id_f2d8bcae", "user_id"),
         Index("analytics_soiltemperaturelow_zone_id_da6a981f", "zone_id"),
+        Index(
+            "ix_analytics_soiltemperaturelow_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2430,6 +2491,11 @@ class AnalyticsSoiltemperaturemedium(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_soiltemperaturemedium_pkey"),
         Index("analytics_soiltemperaturemedium_user_id_abc59db5", "user_id"),
         Index("analytics_soiltemperaturemedium_zone_id_f19fa4a1", "zone_id"),
+        Index(
+            "ix_analytics_soiltemperaturemedium_user_id_timestamp",
+            "user_id",
+            "timestamp",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2477,6 +2543,7 @@ class AnalyticsSolarradiation(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_solarradiation_pkey"),
         Index("analytics_solarradiation_user_id_9af11eae", "user_id"),
         Index("analytics_solarradiation_zone_id_4b3654a3", "zone_id"),
+        Index("ix_analytics_solarradiation_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2524,6 +2591,9 @@ class AnalyticsTemperatureweather(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_temperatureweather_pkey"),
         Index("analytics_temperatureweather_user_id_9da4f1c4", "user_id"),
         Index("analytics_temperatureweather_zone_id_ea2d3879", "zone_id"),
+        Index(
+            "ix_analytics_temperatureweather_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2571,6 +2641,7 @@ class AnalyticsVpdweather(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_vpdweather_pkey"),
         Index("analytics_vpdweather_user_id_1bcf0232", "user_id"),
         Index("analytics_vpdweather_zone_id_20bd35c6", "zone_id"),
+        Index("ix_analytics_vpdweather_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2618,6 +2689,7 @@ class AnalyticsWaterecsensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_waterecsensor_pkey"),
         Index("analytics_waterecsensor_user_id_81437f78", "user_id"),
         Index("analytics_waterecsensor_zone_id_810b7fa9", "zone_id"),
+        Index("ix_analytics_waterecsensor_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2665,6 +2737,7 @@ class AnalyticsWaterflowsensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_waterflowsensor_pkey"),
         Index("analytics_waterflowsensor_user_id_b6bbd62d", "user_id"),
         Index("analytics_waterflowsensor_zone_id_e3e132c3", "zone_id"),
+        Index("ix_analytics_waterflowsensor_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2712,6 +2785,9 @@ class AnalyticsWaterlevelsensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_waterlevelsensor_pkey"),
         Index("analytics_waterlevelsensor_user_id_0881f5f0", "user_id"),
         Index("analytics_waterlevelsensor_zone_id_8e511e4f", "zone_id"),
+        Index(
+            "ix_analytics_waterlevelsensor_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2759,6 +2835,9 @@ class AnalyticsWaterpressuresensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_waterpressuresensor_pkey"),
         Index("analytics_waterpressuresensor_user_id_4b65b052", "user_id"),
         Index("analytics_waterpressuresensor_zone_id_62419baa", "zone_id"),
+        Index(
+            "ix_analytics_waterpressuresensor_user_id_timestamp", "user_id", "timestamp"
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2806,6 +2885,7 @@ class AnalyticsWinddirection(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_winddirection_pkey"),
         Index("analytics_winddirection_user_id_1324bbbf", "user_id"),
         Index("analytics_winddirection_zone_id_9c4ba837", "zone_id"),
+        Index("ix_analytics_winddirection_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2853,6 +2933,7 @@ class AnalyticsWindspeed(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_windspeed_pkey"),
         Index("analytics_windspeed_user_id_88dc61be", "user_id"),
         Index("analytics_windspeed_zone_id_90c76a35", "zone_id"),
+        Index("ix_analytics_windspeed_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2947,6 +3028,7 @@ class AnalyticsBatterysensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_batterysensor_pkey"),
         Index("analytics_batterysensor_user_id", "user_id"),
         Index("analytics_batterysensor_zone_id", "zone_id"),
+        Index("ix_analytics_batterysensor_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
@@ -2989,6 +3071,7 @@ class AnalyticsSignalsensor(AgriBase, HasDeviceId):
         PrimaryKeyConstraint("id", name="analytics_signalsensor_pkey"),
         Index("analytics_signalsensor_user_id", "user_id"),
         Index("analytics_signalsensor_zone_id", "zone_id"),
+        Index("ix_analytics_signalsensor_user_id_timestamp", "user_id", "timestamp"),
     )
 
     id: Mapped[int] = mapped_column(
