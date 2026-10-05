@@ -359,6 +359,27 @@ class AnalyticsZone(AgriBase):
     elevation_m: Mapped[float] = mapped_column(
         Double(53), nullable=False, server_default=text("0")
     )
+    # Basin / reservoir geometry (ultrasonic level sensor). Nullable: only
+    # set for zones with a level sensor. Legacy trio restored from dropped
+    # e8a1c7f4d2b9; rectangle trio is new (L x W x H_tot).
+    basin_max_depth_m: Mapped[Optional[float]] = mapped_column(
+        Double(53), nullable=True
+    )
+    basin_area_m2: Mapped[Optional[float]] = mapped_column(
+        Double(53), nullable=True
+    )
+    sensor_mount_offset_m: Mapped[Optional[float]] = mapped_column(
+        Double(53), nullable=True
+    )
+    basin_length_m: Mapped[Optional[float]] = mapped_column(
+        Double(53), nullable=True
+    )
+    basin_width_m: Mapped[Optional[float]] = mapped_column(
+        Double(53), nullable=True
+    )
+    basin_height_m: Mapped[Optional[float]] = mapped_column(
+        Double(53), nullable=True
+    )
     # User → Sector → Zone grouping. Nullable: a zone with no sector is
     # "unassigned" (backfill leaves every existing zone here).
     sector_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
