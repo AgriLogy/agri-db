@@ -1,6 +1,16 @@
 # CHANGELOG
 
 
+## v0.21.0 (2026-10-05)
+
+### Features
+
+- **basin**: Rectangular basin columns on analytics_zone
+  ([`2399bf2`](https://github.com/AgriLogy/agri-db/commit/2399bf23a72bc22d7fd029196c98b0bca8b5193f))
+
+- restore legacy trio + add basin_length/width/height (idempotent)
+
+
 ## v0.20.1 (2026-08-07)
 
 ### Bug Fixes
