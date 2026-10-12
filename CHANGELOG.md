@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.22.0 (2026-10-12)
+
+### Features
+
+- **forage**: Borehole zone columns and foragesensor table
+  ([`37fc8d4`](https://github.com/AgriLogy/agri-db/commit/37fc8d49289cd0af9178adab96e1408b7e970405))
+
+
 ## v0.21.0 (2026-10-05)
 
 ### Features
