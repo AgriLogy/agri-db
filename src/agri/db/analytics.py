@@ -365,21 +365,23 @@ class AnalyticsZone(AgriBase):
     basin_max_depth_m: Mapped[Optional[float]] = mapped_column(
         Double(53), nullable=True
     )
-    basin_area_m2: Mapped[Optional[float]] = mapped_column(
-        Double(53), nullable=True
-    )
+    basin_area_m2: Mapped[Optional[float]] = mapped_column(Double(53), nullable=True)
     sensor_mount_offset_m: Mapped[Optional[float]] = mapped_column(
         Double(53), nullable=True
     )
-    basin_length_m: Mapped[Optional[float]] = mapped_column(
+    basin_length_m: Mapped[Optional[float]] = mapped_column(Double(53), nullable=True)
+    basin_width_m: Mapped[Optional[float]] = mapped_column(Double(53), nullable=True)
+    basin_height_m: Mapped[Optional[float]] = mapped_column(Double(53), nullable=True)
+    # Borehole (forage) cylinder: diameter + total depth for the visual,
+    # high/low depth thresholds (metres) for the level status.
+    forage_diameter_m: Mapped[Optional[float]] = mapped_column(
         Double(53), nullable=True
     )
-    basin_width_m: Mapped[Optional[float]] = mapped_column(
+    forage_total_depth_m: Mapped[Optional[float]] = mapped_column(
         Double(53), nullable=True
     )
-    basin_height_m: Mapped[Optional[float]] = mapped_column(
-        Double(53), nullable=True
-    )
+    forage_high_m: Mapped[Optional[float]] = mapped_column(Double(53), nullable=True)
+    forage_low_m: Mapped[Optional[float]] = mapped_column(Double(53), nullable=True)
     # User → Sector → Zone grouping. Nullable: a zone with no sector is
     # "unassigned" (backfill leaves every existing zone here).
     sector_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
@@ -503,6 +505,9 @@ class AnalyticsZone(AgriBase):
     )
     analytics_waterlevelsensor: Mapped[list["AnalyticsWaterlevelsensor"]] = (
         relationship("AnalyticsWaterlevelsensor", back_populates="zone")
+    )
+    analytics_foragesensor: Mapped[list["AnalyticsForagesensor"]] = relationship(
+        "AnalyticsForagesensor", back_populates="zone"
     )
     analytics_waterpressuresensor: Mapped[list["AnalyticsWaterpressuresensor"]] = (
         relationship("AnalyticsWaterpressuresensor", back_populates="zone")
@@ -2833,6 +2838,54 @@ class AnalyticsWaterlevelsensor(AgriBase, HasDeviceId):
     )
     zone: Mapped["AnalyticsZone"] = relationship(
         "AnalyticsZone", back_populates="analytics_waterlevelsensor"
+    )
+
+
+class AnalyticsForagesensor(AgriBase, HasDeviceId):
+    __tablename__ = "analytics_foragesensor"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["user_id"],
+            ["CustomUser_customuser.id"],
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_foragesen_user_id_9c2e1a4b_fk_CustomUse",
+        ),
+        ForeignKeyConstraint(
+            ["zone_id"],
+            ["analytics_zone.id"],
+            deferrable=True,
+            initially="DEFERRED",
+            name="analytics_foragesen_zone_id_3f8d2c7e_fk_analytics",
+        ),
+        PrimaryKeyConstraint("id", name="analytics_foragesensor_pkey"),
+        Index("analytics_foragesensor_user_id_9c2e1a4b", "user_id"),
+        Index("analytics_foragesensor_zone_id_3f8d2c7e", "zone_id"),
+        Index("ix_analytics_foragesensor_user_id_timestamp", "user_id", "timestamp"),
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        Identity(
+            start=1,
+            increment=1,
+            minvalue=1,
+            maxvalue=9223372036854775807,
+            cycle=False,
+            cache=1,
+        ),
+        primary_key=True,
+    )
+    timestamp: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    zone_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    value: Mapped[Optional[float]] = mapped_column(Double(53))
+
+    user: Mapped["CustomUserCustomuser"] = relationship(
+        "CustomUserCustomuser", back_populates="analytics_foragesensor"
+    )
+    zone: Mapped["AnalyticsZone"] = relationship(
+        "AnalyticsZone", back_populates="analytics_foragesensor"
     )
 
 

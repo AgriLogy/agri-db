@@ -53,6 +53,7 @@ if TYPE_CHECKING:
         AnalyticsElectricityconsumptionsensor,
         AnalyticsEt0calculated,
         AnalyticsEt0weather,
+        AnalyticsForagesensor,
         AnalyticsFruitsizesensor,
         AnalyticsGraphname,
         AnalyticsHumidityweather,
@@ -364,6 +365,9 @@ class CustomUserCustomuser(AgriBase):
     )
     analytics_waterlevelsensor: Mapped[list["AnalyticsWaterlevelsensor"]] = (
         relationship("AnalyticsWaterlevelsensor", back_populates="user")
+    )
+    analytics_foragesensor: Mapped[list["AnalyticsForagesensor"]] = relationship(
+        "AnalyticsForagesensor", back_populates="user"
     )
     analytics_waterpressuresensor: Mapped[list["AnalyticsWaterpressuresensor"]] = (
         relationship("AnalyticsWaterpressuresensor", back_populates="user")
