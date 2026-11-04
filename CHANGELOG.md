@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.23.1 (2026-11-04)
+
+### Bug Fixes
+
+- **activegraph**: Add forage_level_status column
+  ([#80](https://github.com/AgriLogy/agri-db/pull/80),
+  [`eaac958`](https://github.com/AgriLogy/agri-db/commit/eaac958b7d2cf7871588b0031a5813b26fcb9ebf))
+
+The borehole (forage) feature added a forage_level_status toggle to Django's ActiveGraph (agri-api
+  migration 0069) but agri-db never got the column, so schemas built from agri-db lack it and
+  fastapp cannot serve the toggle (agri-api active-graph parity tests fail on main). Migration
+  e7f8a9b0c1d2, DEFAULT TRUE as in Django; ORM field added.
+
+
 ## v0.23.0 (2026-11-04)
 
 ### Features
