@@ -52,12 +52,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.execute(
-        "ALTER TABLE analytics_zone DROP COLUMN IF EXISTS basin_height_m"
-    )
-    op.execute(
-        "ALTER TABLE analytics_zone DROP COLUMN IF EXISTS basin_width_m"
-    )
-    op.execute(
-        "ALTER TABLE analytics_zone DROP COLUMN IF EXISTS basin_length_m"
-    )
+    op.execute("ALTER TABLE analytics_zone DROP COLUMN IF EXISTS basin_height_m")
+    op.execute("ALTER TABLE analytics_zone DROP COLUMN IF EXISTS basin_width_m")
+    op.execute("ALTER TABLE analytics_zone DROP COLUMN IF EXISTS basin_length_m")
