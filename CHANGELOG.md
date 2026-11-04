@@ -1,6 +1,37 @@
 # CHANGELOG
 
 
+## v0.23.0 (2026-11-04)
+
+### Features
+
+- **farm-map**: Sensor installations, map preferences and sector crop metadata
+  ([#78](https://github.com/AgriLogy/agri-db/pull/78),
+  [`d3f62df`](https://github.com/AgriLogy/agri-db/commit/d3f62df8d2fc7072c84cc4f391f8712d5db7ec64))
+
+* feat(farm-map): sensor installations, map preferences and sector crop metadata
+
+Phase 1 of the farm-map upgrade (AgriLogy/agri-api#459). Placed sensors and map display settings
+  still live in agri-web's localStorage, so they are per-browser and lost on a cache clear; this
+  makes them server-owned.
+
+- analytics_sector: optional crop, variety, planting_date, irrigation_type, root_depth_cm, and
+  is_active (NOT NULL DEFAULT true). - analytics_sensorinstallation: named sensor point (type,
+  lat/lon, sector, installation details, optional reading stream zone_id + sensor_key, soft device
+  link). Sector/zone FKs SET NULL, user FK cascades; partial unique (user_id, client_ref) makes the
+  localStorage import idempotent. - analytics_mappreference: per-user basemap, layer
+  visibility/opacity, camera.
+
+JSONB/lat-lon rather than PostGIS, as in b8c2f0d5e713. Idempotent DDL. Verified: upgrade head ->
+  downgrade base -> upgrade head on an empty Postgres; alembic check shows no drift for these
+  tables.
+
+* style(migrations): ruff-format f5a6b7c8d9e0
+
+main fails the lint / ruff check on this file (unformatted downgrade); format it so the farm-map
+  PR's CI can pass.
+
+
 ## v0.22.0 (2026-10-12)
 
 ### Features
