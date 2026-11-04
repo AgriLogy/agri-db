@@ -300,6 +300,16 @@ class AnalyticsSector(AgriBase):
     geometry_updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(
         DateTime(True)
     )
+    # Agronomic metadata shown on the farm map (agri-api#459). All optional.
+    crop: Mapped[Optional[str]] = mapped_column(String(80))
+    variety: Mapped[Optional[str]] = mapped_column(String(80))
+    planting_date: Mapped[Optional[datetime.date]] = mapped_column(Date)
+    # drip | sprinkler | subsurface_drip | pivot | flood | other
+    irrigation_type: Mapped[Optional[str]] = mapped_column(String(30))
+    root_depth_cm: Mapped[Optional[float]] = mapped_column(Double(53))
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
 
     user: Mapped["CustomUserCustomuser"] = relationship(
         "CustomUserCustomuser", back_populates="analytics_sector"
