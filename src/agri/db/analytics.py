@@ -597,6 +597,10 @@ class AnalyticsActivegraph(AgriBase):
     water_level_status: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default=text("true")
     )
+    # Borehole (forage) level section toggle (e7f8a9b0c1d2).
+    forage_level_status: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
     cumulative_precipitation_status: Mapped[bool] = mapped_column(
         Boolean, nullable=False
     )
