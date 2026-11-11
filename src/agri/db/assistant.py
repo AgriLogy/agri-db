@@ -126,23 +126,27 @@ KNOWLEDGE_TOPICS = (
 #: Article languages: Moroccan Darija, Modern Standard Arabic, French, English.
 KNOWLEDGE_LANGUAGES = ("ary", "ar", "fr", "en")
 
-# Arabic spelling variants folded before indexing AND before querying, so
-# "أرض" / "ارض" or "سقية" / "سقيه" match each other: hamza-carrying alefs and
-# alef wasla -> bare alef, alef maqsura -> yeh, teh marbuta -> heh. Harakat,
-# superscript alef and tatweel (the trailing characters with no counterpart in
-# ARABIC_FOLD_TO) are deleted, as SQL translate() does. The Postgres
-# ``simple`` config has no Arabic/Darija stemmer, so this folding plus the
-# article's ``keywords`` (synonyms, Arabizi spellings) is what makes search
-# work across the ways farmers write.
-ARABIC_FOLD_FROM = (
-    "\u0623\u0625\u0622\u0671\u0649\u0629"
-    "\u064b\u064c\u064d\u064e\u064f\u0650\u0651\u0652\u0670\u0640"
-)
-ARABIC_FOLD_TO = "\u0627\u0627\u0627\u0627\u064a\u0647"
+# Spelling variants folded before indexing AND before querying, so the ways
+# farmers type the same word match each other:
+# * French accents: "été" / "ete", "irrigué" / "irrigue";
+# * Arabic: hamza-carrying alefs and alef wasla -> bare alef, alef maqsura ->
+#   yeh, teh marbuta -> heh ("أرض" / "ارض", "سقية" / "سقيه").
+# Harakat, superscript alef and tatweel (the trailing characters with no
+# counterpart in FOLD_TO) are deleted, as SQL translate() does. The Postgres
+# ``simple`` config has no Darija stemmer and keeps accents, so this folding
+# plus the article's ``keywords`` (synonyms, Arabizi spellings) is what makes
+# search work across the ways farmers write.
+_LATIN_FROM = "àâäáãéèêëíîïìóôöòõúùûüçñÿ"
+_LATIN_TO = "aaaaaeeeeiiiiooooouuuucny"
+_ARABIC_FROM = "\u0623\u0625\u0622\u0671\u0649\u0629"
+_ARABIC_TO = "\u0627\u0627\u0627\u0627\u064a\u0647"
+_ARABIC_DROP = "\u064b\u064c\u064d\u064e\u064f\u0650\u0651\u0652\u0670\u0640"
+FOLD_FROM = _LATIN_FROM + _ARABIC_FROM + _ARABIC_DROP
+FOLD_TO = _LATIN_TO + _ARABIC_TO
 
 _FOLD_TABLE = {
-    ord(src): (ARABIC_FOLD_TO[i] if i < len(ARABIC_FOLD_TO) else None)
-    for i, src in enumerate(ARABIC_FOLD_FROM)
+    ord(src): (FOLD_TO[i] if i < len(FOLD_TO) else None)
+    for i, src in enumerate(FOLD_FROM)
 }
 
 
@@ -157,17 +161,17 @@ ARABIC_ARTICLE_RE = f"(^|[^{_ARABIC_BLOCK}0-9a-z])[{_CLITICS}]?({_ARTICLES})"
 _ARTICLE = re.compile(ARABIC_ARTICLE_RE)
 
 
-def fold_arabic(text: str) -> str:
+def fold_text(text: str) -> str:
     """Python twin of the SQL normalisation in ``search_vector``: lower-case,
-    fold letter variants, drop harakat/tatweel and the glued article. Apply it
-    to a query before building the tsquery."""
+    fold accents and Arabic letter variants, drop harakat/tatweel and the glued
+    article. Apply it to a query before building the tsquery."""
     return _ARTICLE.sub(r"\1", text.lower().translate(_FOLD_TABLE))
 
 
 def _folded(column: str) -> str:
     folded = (
         f"translate(lower(COALESCE({column}, ''::text)), "
-        f"'{ARABIC_FOLD_FROM}'::text, '{ARABIC_FOLD_TO}'::text)"
+        f"'{FOLD_FROM}'::text, '{FOLD_TO}'::text)"
     )
     return (
         f"regexp_replace({folded}, '{ARABIC_ARTICLE_RE}'::text, '\\1'::text, 'g'::text)"
