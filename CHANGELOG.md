@@ -1,6 +1,27 @@
 # CHANGELOG
 
 
+## v0.25.0 (2026-11-11)
+
+### Features
+
+- **assistant**: Knowledge base article table ([#84](https://github.com/AgriLogy/agri-db/pull/84),
+  [`9aebab2`](https://github.com/AgriLogy/agri-db/commit/9aebab2165214358994168f9ff2298b761533b60))
+
+* feat(assistant): knowledge base article table
+
+assistant_knowledge_article: approved agronomy articles the Agrogo assistant searches and cites
+  (agri-api #461 phase 2). Status workflow, review dates, sources, and a generated tsvector over
+  Arabic-folded text (letter variants, harakat and the glued article/clitics normalised) so Darija,
+  MSA, Arabizi and French queries match.
+
+Closes #83
+
+* style: format-stable article regex constant
+
+* feat(assistant): fold French accents in the knowledge search vector
+
+
 ## v0.24.0 (2026-11-11)
 
 ### Features
