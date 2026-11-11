@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.24.0 (2026-11-11)
+
+### Features
+
+- **calibration**: Equation, coefficients, reference points on sensorcalibration
+  ([#82](https://github.com/AgriLogy/agri-db/pull/82),
+  [`1968730`](https://github.com/AgriLogy/agri-db/commit/19687305dce4bd02f020355e8a5bb5b8b93e1c0a))
+
+General sensor calibration (AgriLogy/agri-api#460): a user-written equation in x (the captured
+  value) whose coefficients are fitted from reference points (captured, real). Adds equation (TEXT,
+  '' = affine), coefficients, reference_points and fit_metrics (JSONB) to
+  analytics_sensorcalibration. Existing rows keep the affine scale_a/offset_b behaviour.
+
+
 ## v0.23.1 (2026-11-04)
 
 ### Bug Fixes
