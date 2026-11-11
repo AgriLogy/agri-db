@@ -150,11 +150,10 @@ _FOLD_TABLE = {
 # للزيتون, بالتنقيط, فالصيف, والما. Prefix search ("زيتون:*") cannot see past
 # it, so a word-initial [و ف ب ك]? + ال/لل is dropped. Same regex in SQL
 # (regexp_replace, ARE syntax) and Python (re), with literal characters.
-ARABIC_ARTICLE_RE = (
-    "(^|[^\u0600-\u06ff0-9a-z])"
-    "[\u0648\u0641\u0628\u0643]?"
-    "(\u0627\u0644|\u0644\u0644)"
-)
+_ARABIC_BLOCK = "\u0600-\u06ff"
+_CLITICS = "\u0648\u0641\u0628\u0643"  # wa, fa, bi, ka
+_ARTICLES = "\u0627\u0644|\u0644\u0644"  # al, li-l
+ARABIC_ARTICLE_RE = f"(^|[^{_ARABIC_BLOCK}0-9a-z])[{_CLITICS}]?({_ARTICLES})"
 _ARTICLE = re.compile(ARABIC_ARTICLE_RE)
 
 
