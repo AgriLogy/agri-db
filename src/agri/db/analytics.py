@@ -3327,8 +3327,9 @@ class AnalyticsSensorgroupsensor(AgriBase):
 
 
 class AnalyticsSensorcalibration(AgriBase):
-    """Affine calibration of one sensor stream: ``real = raw * scale_a + offset_b``
-    (agri-web #67). Keyed by the same ``(device_id, sensor_key)`` pair as
+    """Calibration of one sensor stream: affine ``real = raw * scale_a + offset_b``
+    (agri-web #67), or — when ``equation`` is set — ``real = equation(raw)``
+    with fitted ``coefficients`` (agri-api #460). Keyed by the same ``(device_id, sensor_key)`` pair as
     ``AnalyticsSensorgroupsensor`` so both features address a sensor identically.
     STORAGE ONLY — applying the transform (and any unit conversion) lands later
     in agri-core; nothing here rewrites stored readings."""
@@ -3380,5 +3381,18 @@ class AnalyticsSensorcalibration(AgriBase):
     )
     # Optional note: who calibrated, against which reference instrument.
     note: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("''"))
+    # General calibration (agri-api #460): an equation in ``x`` (the captured
+    # value), e.g. ``a*x^2 + b*x + c``. When non-empty it REPLACES scale_a /
+    # offset_b; '' keeps the affine behaviour above.
+    equation: Mapped[str] = mapped_column(
+        Text, nullable=False, server_default=text("''")
+    )
+    # ``{name: value}`` for the equation's coefficients (usually fitted).
+    coefficients: Mapped[Optional[dict]] = mapped_column(JSONB)
+    # ``[{captured, real}, ...]`` the coefficients were fitted from — kept for
+    # traceability and re-fitting.
+    reference_points: Mapped[Optional[list]] = mapped_column(JSONB)
+    # Fit quality summary: n_points, r2, rmse, mae, max_abs_error, warnings.
+    fit_metrics: Mapped[Optional[dict]] = mapped_column(JSONB)
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True))
