@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.26.0 (2026-11-12)
+
+### Features
+
+- **notifications**: Notification_push_token table for mobile push
+  ([#86](https://github.com/AgriLogy/agri-db/pull/86),
+  [`4a911a1`](https://github.com/AgriLogy/agri-db/commit/4a911a106b05798cd94f90411fd4b6428580bfa5))
+
+New agri.db.notifications.NotificationPushToken + migration c9e5a1b3d7f2 (revises b8d4f0a2c3e5): one
+  row per app install registered for FCM push (token unique, platform CHECK android|ios|web, user_id
+  indexed).
+
+Closes #85
+
+
 ## v0.25.0 (2026-11-11)
 
 ### Features
