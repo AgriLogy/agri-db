@@ -30,4 +30,5 @@ from agri.db.billing import *  # noqa: F401, F403  (plans/subscriptions/invoices
 from agri.db.devices import *  # noqa: F401, F403  (device registry)
 from agri.db.farm_map import *  # noqa: F401, F403  (sensor installations, map prefs)
 from agri.db.irrigation import *  # noqa: F401, F403  (programs/output commands)
+from agri.db.notifications import *  # noqa: F401, F403  (mobile push tokens)
 from agri.db.technicians import *  # noqa: F401, F403  (technician RBAC grants)
