@@ -1,6 +1,25 @@
 # CHANGELOG
 
 
+## v0.27.0 (2026-11-15)
+
+### Features
+
+- **water**: Water level monitoring tables (water sources, devices, readings, alerts)
+  ([#88](https://github.com/AgriLogy/agri-db/pull/88),
+  [`e1130b2`](https://github.com/AgriLogy/agri-db/commit/e1130b227032dd0b56084e3a2326f3b9a2451d54))
+
+New agri.db.water module + migration d1f3a5b7c9e2 (revises c9e5a1b3d7f2) for
+  AgriLogy/agrilogy-front#261:
+
+- water_source: well / basin / tank geometry, minimum reserve, alert thresholds, offline delay and
+  data-source mode - water_level_device: adapter, scale/offset and the optional Modbus / LoRaWAN
+  integration fields - water_level_reading: normalised level_m time series - water_level_alert: LOW
+  / CRITICAL / HIGH / OFFLINE events, one open per (source, kind) via a partial unique index
+
+Closes #87
+
+
 ## v0.26.0 (2026-11-12)
 
 ### Features
