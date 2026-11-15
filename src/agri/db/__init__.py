@@ -32,3 +32,4 @@ from agri.db.farm_map import *  # noqa: F401, F403  (sensor installations, map p
 from agri.db.irrigation import *  # noqa: F401, F403  (programs/output commands)
 from agri.db.notifications import *  # noqa: F401, F403  (mobile push tokens)
 from agri.db.technicians import *  # noqa: F401, F403  (technician RBAC grants)
+from agri.db.water import *  # noqa: F401, F403  (water level monitoring)
