@@ -43,7 +43,7 @@ from sqlalchemy import (
     UniqueConstraint,
     text,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from agri.db.base import AgriBase
@@ -97,9 +97,10 @@ class WaterSource(AgriBase):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     source_type: Mapped[str] = mapped_column(String(16), nullable=False)
     geometry: Mapped[str] = mapped_column(String(16), nullable=False)
-    # Zones this source supplies (display only; no FK, like elsewhere).
+    # Zones this source supplies, as a JSON list of zone ids (display only;
+    # no FK, like elsewhere).
     zone_ids: Mapped[list[int]] = mapped_column(
-        ARRAY(BigInteger), nullable=False, server_default=text("'{}'::bigint[]")
+        JSONB, nullable=False, server_default=text("'[]'::jsonb")
     )
     # Highest water column the source can hold, bottom to max-water line.
     max_height_m: Mapped[float] = mapped_column(Double(53), nullable=False)
