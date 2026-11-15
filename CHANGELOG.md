@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.27.1 (2026-11-15)
+
+### Bug Fixes
+
+- **water**: Store water_source.zone_ids as jsonb, not bigint[]
+  ([#90](https://github.com/AgriLogy/agri-db/pull/90),
+  [`6f02142`](https://github.com/AgriLogy/agri-db/commit/6f02142c35e43a133c394adfc4ac74f77a244232))
+
+Migration e2a4c6b8d0f1 (revises d1f3a5b7c9e2) converts the column with to_jsonb and sets the default
+  to '[]'::jsonb; downgrade converts back. BIGINT[] was the schema's only ARRAY column and breaks
+  the SQLite schema mirrors in agri-api's tests, which already map JSONB to JSON.
+
+Closes #89
+
+
 ## v0.27.0 (2026-11-15)
 
 ### Features
