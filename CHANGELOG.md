@@ -1,6 +1,21 @@
 # CHANGELOG
 
 
+## v0.28.0 (2026-11-23)
+
+### Features
+
+- **farm-map**: Satellite history tables (shape revisions, acquisitions, index stats)
+  ([#92](https://github.com/AgriLogy/agri-db/pull/92),
+  [`618fe14`](https://github.com/AgriLogy/agri-db/commit/618fe146f1f4630fa685826903d2842524d2c70d))
+
+sector_geometry_revision, satellite_acquisition and sector_satellite_stat, all cascade-deleting with
+  their sector. Stats and acquisitions are keyed by a geometry hash so a redraw never mixes in
+  numbers from the old shape.
+
+Closes #91
+
+
 ## v0.27.1 (2026-11-15)
 
 ### Bug Fixes
