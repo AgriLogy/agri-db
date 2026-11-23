@@ -11,6 +11,16 @@ farmer across devices (AgriLogy/agri-api#459, Phase 1).
   optional soft link to a registered ``analytics_device``.
 * ``analytics_mappreference`` — one row per user: basemap, layer visibility /
   opacity, and the last camera position.
+
+Satellite history (agri-api#459 phase 3):
+
+* ``sector_geometry_revision`` — every shape a sector has had (drawn, imported
+  from KML, or restored), newest last, so an edit can be reviewed and undone.
+* ``satellite_acquisition``    — Sentinel-2 dates seen over a sector shape.
+* ``sector_satellite_stat``    — per-date index statistics (NDVI / NDMI / NDRE)
+  over a sector shape, stored as fetched so trend charts need no new
+  Copernicus call. ``geometry_hash`` ties a row to the exact shape it was
+  computed on: after a redraw, old rows stay but no longer match.
 """
 
 from __future__ import annotations
@@ -20,6 +30,7 @@ from typing import Optional
 
 from sqlalchemy import (
     BigInteger,
+    CheckConstraint,
     Date,
     DateTime,
     Double,
@@ -29,6 +40,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     String,
     Text,
+    UniqueConstraint,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -36,7 +48,33 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from agri.db.base import AgriBase
 
-__all__ = ["AnalyticsMappreference", "AnalyticsSensorinstallation"]
+__all__ = [
+    "AnalyticsMappreference",
+    "AnalyticsSensorinstallation",
+    "SatelliteAcquisition",
+    "SectorGeometryRevision",
+    "SectorSatelliteStat",
+    "SATELLITE_INDEXES",
+    "GEOMETRY_REVISION_SOURCES",
+]
+
+SATELLITE_INDEXES = ("ndvi", "ndmi", "ndre")
+GEOMETRY_REVISION_SOURCES = ("draw", "kml", "restore")
+
+
+def _identity() -> Identity:
+    return Identity(
+        start=1,
+        increment=1,
+        minvalue=1,
+        maxvalue=9223372036854775807,
+        cycle=False,
+        cache=1,
+    )
+
+
+def _in(column: str, values: tuple[str, ...]) -> str:
+    return f"{column} IN ({', '.join(repr(v) for v in values)})"
 
 
 class AnalyticsSensorinstallation(AgriBase):
@@ -145,5 +183,104 @@ class AnalyticsMappreference(AgriBase):
     # {"center": [lon, lat], "zoom": float, "bearing": float, "pitch": float}
     camera: Mapped[Optional[dict]] = mapped_column(JSONB)
     updated_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(True), nullable=False, server_default=text("now()")
+    )
+
+
+def _sector_fk(table: str) -> ForeignKeyConstraint:
+    return ForeignKeyConstraint(
+        ["sector_id"],
+        ["analytics_sector.id"],
+        ondelete="CASCADE",
+        name=f"{table}_sector_id_fk",
+    )
+
+
+class SectorGeometryRevision(AgriBase):
+    """One shape a sector has had. Written on every geometry change."""
+
+    __tablename__ = "sector_geometry_revision"
+    __table_args__ = (
+        _sector_fk("sector_geometry_revision"),
+        PrimaryKeyConstraint("id", name="sector_geometry_revision_pkey"),
+        CheckConstraint(
+            _in("source", GEOMETRY_REVISION_SOURCES),
+            name="sector_geometry_revision_source_check",
+        ),
+        Index("sector_geometry_revision_sector_idx", "sector_id", "created_at"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, _identity(), primary_key=True)
+    sector_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    geometry: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    area_ha: Mapped[Optional[float]] = mapped_column(Double(53))
+    perimeter_m: Mapped[Optional[float]] = mapped_column(Double(53))
+    source: Mapped[str] = mapped_column(
+        String(16), nullable=False, server_default=text("'draw'")
+    )
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(True), nullable=False, server_default=text("now()")
+    )
+
+
+class SatelliteAcquisition(AgriBase):
+    """A Sentinel-2 acquisition date seen over one sector shape."""
+
+    __tablename__ = "satellite_acquisition"
+    __table_args__ = (
+        _sector_fk("satellite_acquisition"),
+        PrimaryKeyConstraint("id", name="satellite_acquisition_pkey"),
+        UniqueConstraint(
+            "sector_id",
+            "geometry_hash",
+            "acquired_on",
+            name="satellite_acquisition_sector_hash_date_key",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, _identity(), primary_key=True)
+    sector_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    geometry_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    acquired_on: Mapped[datetime.date] = mapped_column(Date, nullable=False)
+    cloud_cover_pct: Mapped[Optional[float]] = mapped_column(Double(53))
+    fetched_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(True), nullable=False, server_default=text("now()")
+    )
+
+
+class SectorSatelliteStat(AgriBase):
+    """Index statistics over one sector shape on one acquisition date."""
+
+    __tablename__ = "sector_satellite_stat"
+    __table_args__ = (
+        _sector_fk("sector_satellite_stat"),
+        PrimaryKeyConstraint("id", name="sector_satellite_stat_pkey"),
+        CheckConstraint(
+            _in("index_kind", SATELLITE_INDEXES),
+            name="sector_satellite_stat_index_kind_check",
+        ),
+        UniqueConstraint(
+            "sector_id",
+            "geometry_hash",
+            "index_kind",
+            "acquired_on",
+            name="sector_satellite_stat_sector_hash_index_date_key",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, _identity(), primary_key=True)
+    sector_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    geometry_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    index_kind: Mapped[str] = mapped_column(String(8), nullable=False)
+    acquired_on: Mapped[datetime.date] = mapped_column(Date, nullable=False)
+    mean: Mapped[float] = mapped_column(Double(53), nullable=False)
+    min: Mapped[Optional[float]] = mapped_column(Double(53))
+    max: Mapped[Optional[float]] = mapped_column(Double(53))
+    std: Mapped[Optional[float]] = mapped_column(Double(53))
+    valid_fraction: Mapped[Optional[float]] = mapped_column(Double(53))
+    # {"low": share, "medium": share, "high": share} of clear pixels
+    classes: Mapped[Optional[dict]] = mapped_column(JSONB)
+    fetched_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(True), nullable=False, server_default=text("now()")
     )
